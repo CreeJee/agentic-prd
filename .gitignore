@@ -21,3 +21,13 @@ Thumbs.db
 # Supabase
 **/supabase/.branches
 **/supabase/.temp
+
+# Turborepo
+.turbo/
+
+# Package outputs
+packages/*/dist/
+apps/*/dist/
+
+# Dev-plugin discovery file
+.agentic-prd.dev.json

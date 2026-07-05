@@ -4,23 +4,28 @@
   "type": "module",
   "description": "Drop-in comment-pin widget",
   "license": "MIT",
-  "sideEffects": ["**/*.css"],
+  "sideEffects": [
+    "**/*.css"
+  ],
   "types": "./src/index.ts",
   "exports": {
-    ".": {
-      "types": "./src/index.ts",
-      "default": "./src/index.ts"
-    },
+    ".": "./dist/index.js",
     "./package.json": "./package.json"
   },
-  "files": ["dist", "src"],
+  "files": [
+    "dist",
+    "src"
+  ],
   "publishConfig": {
     "access": "public",
     "main": "./dist/index.js",
     "module": "./dist/index.js",
     "types": "./dist/index.d.ts",
     "exports": {
-      ".": { "types": "./dist/index.d.ts", "import": "./dist/index.js" },
+      ".": {
+        "types": "./dist/index.d.ts",
+        "import": "./dist/index.js"
+      },
       "./package.json": "./package.json"
     }
   },
@@ -76,6 +81,7 @@
     "@types/node": "^26.1.0",
     "@types/react": "19.2.17",
     "@types/react-dom": "19.2.3",
+    "@vitejs/plugin-react": "^6.0.3",
     "jsdom": "^29.1.1",
     "react": "^19.2.7",
     "react-dom": "^19.2.7",
