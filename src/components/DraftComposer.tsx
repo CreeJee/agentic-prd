@@ -64,7 +64,7 @@ export function DraftComposer({
           <Button
             type="button"
             variant="ghost"
-            size="sm"
+            size="default"
             onClick={onCancel}
             className="text-slate-500 hover:bg-slate-50"
           >
@@ -73,7 +73,7 @@ export function DraftComposer({
           <Button
             type="button"
             variant="default"
-            size="sm"
+            size="default"
             disabled={!isValid}
             onClick={submit}
           >

@@ -336,7 +336,7 @@ export function ThreadPopover({
         <Button
           type="submit"
           variant="default"
-          size="sm"
+          size="default"
           disabled={!replyForm.formState.isValid || loadingAddComment}
         >
           {loadingAddComment ? "등록 중…" : "등록"}
