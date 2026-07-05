@@ -248,9 +248,9 @@ const THEME: EditorThemeClasses = {
       "relative my-0.5 list-none pl-6 text-slate-400 line-through outline-none before:absolute before:top-0.5 before:left-0 before:size-4 before:cursor-pointer before:rounded-sm before:border before:border-primary before:bg-primary before:content-[''] after:absolute after:top-[3px] after:left-[6px] after:h-2 after:w-1 after:rotate-45 after:border-white after:border-r-2 after:border-b-2 after:content-['']",
   },
   heading: {
-    h1: "font-semibold typo-h1-regular",
-    h2: "font-semibold typo-h2-regular",
-    h3: "font-medium typo-h3-regular",
+    h1: "text-2xl font-semibold",
+    h2: "text-xl font-semibold",
+    h3: "text-base font-medium",
   },
   quote: "border-slate-200 border-l-2 pl-2 text-slate-500",
   link: "text-primary underline",

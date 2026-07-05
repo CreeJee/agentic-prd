@@ -295,7 +295,7 @@ function SpecList({
         className="flex cursor-move items-center justify-between border-slate-100 border-b px-4 py-3"
       >
         <div className="flex min-w-0 flex-col">
-          <span className="typo-regular-medium text-slate-900">기획 문서</span>
+          <span className="font-medium text-slate-900 text-sm">기획 문서</span>
           <span className="truncate text-xs text-slate-400">{pageLabel}</span>
         </div>
         <Button

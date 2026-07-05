@@ -74,7 +74,7 @@ export function CommentPanel({
   );
 
   return (
-    <div className="pointer-events-auto fixed right-5 bottom-20 z-[99992] flex max-h-[70vh] w-80 flex-col rounded-xl border border-slate-200 bg-white shadow-xl">
+    <div className="pointer-events-auto fixed right-5 bottom-20 z-99992 flex max-h-[70vh] w-80 flex-col rounded-xl border border-slate-200 bg-white shadow-xl">
       <div className="flex items-center justify-between border-slate-100 border-b px-4 py-2.5">
         <span className="font-medium text-slate-900 text-sm">코멘트</span>
         <Button
