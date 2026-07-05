@@ -43,6 +43,7 @@ import {
   TableIcon,
 } from "lucide-react";
 import { type ReactNode, useEffect, useState } from "react";
+import { Button } from "@/components/ui/button";
 import { cn } from "../cn";
 
 function TBtn({
@@ -57,20 +58,22 @@ function TBtn({
   children: ReactNode;
 }) {
   return (
-    <button
+    <Button
       type="button"
+      variant="ghost"
+      size="icon-sm"
       title={title}
       aria-label={title}
       aria-pressed={active}
       onMouseDown={(e) => e.preventDefault()}
       onClick={onClick}
       className={cn(
-        "flex size-7 shrink-0 items-center justify-center rounded text-slate-500 hover:bg-slate-100",
-        active && "bg-primary/10 text-primary"
+        "text-slate-500 hover:bg-slate-100",
+        active && "bg-primary/10 text-primary hover:bg-primary/15",
       )}
     >
       {children}
-    </button>
+    </Button>
   );
 }
 
