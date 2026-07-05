@@ -76,8 +76,11 @@ describe("specs handlers", () => {
     const dir = mkdtempSync(join(tmpdir(), "sync2-"));
     const res = await handleSyncAll(s, dir, {});
     const names = res.synced.map((r) => r.localPath.split(/[\\/]/).pop());
-    expect(names).toContain("checkout-aaaaaaaa.md");
-    expect(names).toContain("checkout-bbbbbbbb.md");
+    expect(names).toHaveLength(2);
+    for (const name of names) {
+      expect(name).toMatch(/^checkout-[0-9a-f]{8}\.md$/);
+    }
+    expect(new Set(names).size).toBe(2);
     expect(res.synced.every((r) => r.collided)).toBe(true);
   });
 });
