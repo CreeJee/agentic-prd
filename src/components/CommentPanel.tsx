@@ -1,8 +1,9 @@
 import { CheckIcon, XIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "../cn";
-import { authorInitial, snippet, threadAuthor, timeAgo } from "../format";
+import { authorInitial, threadAuthor, timeAgo } from "../format";
 import type { CommentThread } from "../store";
+import { MarkdownEditor } from "./MarkdownEditor";
 
 /** 코멘트 목록 패널(우하단) — 미해결/해결됨 그룹. 행 클릭 시 해당 스레드 열기. */
 export function CommentPanel({
@@ -54,14 +55,15 @@ export function CommentPanel({
             {timeAgo(thread.comments[0]?.at ?? Date.now())}
           </span>
         </span>
-        <span
+        <MarkdownEditor
+          key={`${thread.id}:${thread.comments[0]?.at ?? 0}`}
+          defaultValue={thread.comments[0]?.text ?? ""}
+          editable={false}
           className={cn(
-            "truncate text-sm",
+            "max-h-5 text-sm [&>div]:contents [&_p]:mb-0 [&_p]:truncate",
             resolved ? "text-slate-400" : "text-slate-600"
           )}
-        >
-          {snippet(thread)}
-        </span>
+        />
         {thread.comments.length > 1 && (
           <span className="text-slate-400 text-xs">
             답글 {thread.comments.length - 1}

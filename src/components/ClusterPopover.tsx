@@ -2,8 +2,9 @@ import { CheckIcon, XIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import type { Point } from "../anchor";
 import { cn } from "../cn";
-import { authorInitial, snippet, threadAuthor } from "../format";
+import { authorInitial, threadAuthor } from "../format";
 import type { CommentThread } from "../store";
+import { MarkdownEditor } from "./MarkdownEditor";
 import { PointPopover } from "./PointPopover";
 
 /** 클러스터 펼침 목록 — 겹친 코멘트들을 골라 열 수 있는 컴팩트 리스트 */
@@ -55,13 +56,16 @@ export function ClusterPopover({
                 authorInitial(threadAuthor(t))
               )}
             </span>
-            <span className="flex min-w-0 flex-col">
+            <span className="flex min-w-0 flex-1 flex-col">
               <span className="truncate font-medium text-slate-900 text-sm">
                 {t.comments[0]?.author ?? "익명"}
               </span>
-              <span className="truncate text-slate-600 text-sm">
-                {snippet(t)}
-              </span>
+              <MarkdownEditor
+                key={`${t.id}:${t.comments[0]?.at ?? 0}`}
+                defaultValue={t.comments[0]?.text ?? ""}
+                editable={false}
+                className="max-h-5 text-slate-600 text-sm [&>div]:contents [&_p]:mb-0 [&_p]:truncate"
+              />
             </span>
           </button>
         ))}
