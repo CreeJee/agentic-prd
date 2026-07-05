@@ -311,7 +311,7 @@ export function ThreadPopover({
 
       <form
         onSubmit={submitReply}
-        className="flex shrink-0 items-start gap-2 border-slate-100 border-t p-2"
+        className="flex shrink-0 items-end gap-2 border-slate-100 border-t p-2"
       >
         <div className="flex min-w-0 flex-1 flex-col gap-1">
           <Controller
@@ -336,7 +336,7 @@ export function ThreadPopover({
         <Button
           type="submit"
           variant="default"
-          size="default"
+          size="sm"
           disabled={!replyForm.formState.isValid || loadingAddComment}
         >
           {loadingAddComment ? "등록 중…" : "등록"}
