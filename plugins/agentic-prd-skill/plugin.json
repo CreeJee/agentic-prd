@@ -1,0 +1,5 @@
+{
+  "name": "agentic-prd",
+  "version": "0.1.0",
+  "description": "Talk to a running @agentic-prd/dev-plugin from Claude Code. List comments, resolve threads, sync specs."
+}
