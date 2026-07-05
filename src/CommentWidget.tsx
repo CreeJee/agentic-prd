@@ -1,5 +1,5 @@
 import type { OverlayControllerComponent } from "overlay-kit";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { type ReactNode, useCallback, useEffect, useMemo, useState } from "react";
 import { createPortal } from "react-dom";
 import { buildCapture, clusterIdOf, type Point, resolvePoint } from "./anchor";
 import {
@@ -40,7 +40,7 @@ import {
   useUpdateAnchor,
   useUserName,
 } from "./store";
-import { WidgetProvider } from "./WidgetProvider";
+import { useSetWidgetPortalContainer, WidgetProvider } from "./WidgetProvider";
 
 interface CommentWidgetProps {
   config: CommentWidgetConfig;
@@ -185,7 +185,7 @@ function CommentWidgetInner({
 
   return createPortal(
     <WidgetPanelRuntimeProvider value={panelRuntime}>
-      <div data-comment-root style={{ display: "contents" }}>
+      <CommentWidgetRoot>
         <CommentWidgetOverlayProvider>
           <CommentWidgetSurface
             addMode={addMode}
@@ -211,9 +211,27 @@ function CommentWidgetInner({
             userName={userName}
           />
         </CommentWidgetOverlayProvider>
-      </div>
+      </CommentWidgetRoot>
     </WidgetPanelRuntimeProvider>,
-    document.body
+    document.body,
+  );
+}
+
+/**
+ * 위젯 stacking context 를 정의하고 base-ui overlay 들을 위젯 캔버스 안에 portal 하도록 컨테이너를 공급한다.
+ * canvas 레이어(z-99990) 바로 위에 portal host 를 두어 호스트 dialog(보통 z-50) 와의 z 충돌을 근본적으로 회피한다.
+ */
+function CommentWidgetRoot({ children }: { children: ReactNode }) {
+  const setContainer = useSetWidgetPortalContainer();
+  return (
+    <div data-comment-root style={{ display: "contents" }}>
+      {children}
+      <div
+        ref={setContainer}
+        data-comment-portal-host
+        className="pointer-events-none fixed inset-0 z-99991"
+      />
+    </div>
   );
 }
 
