@@ -5,7 +5,15 @@
  *  - SupabaseClient: 단일 원천(server). 훅이 queryFn/mutation에서 useSupabaseClient로 읽는다.
  */
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { createContext, type ReactNode, useContext, useMemo } from "react";
+import {
+  createContext,
+  type Dispatch,
+  type ReactNode,
+  type SetStateAction,
+  useContext,
+  useMemo,
+  useState,
+} from "react";
 import type { CommentWidgetConfig } from "./config";
 import { createSupabaseClient, type SupabaseClient } from "./supabase";
 
@@ -32,6 +40,31 @@ export function useSupabaseClient(): SupabaseClient {
   return client;
 }
 
+interface WidgetPortalState {
+  container: HTMLElement | null;
+  setContainer: Dispatch<SetStateAction<HTMLElement | null>>;
+}
+
+const WidgetPortalContext = createContext<WidgetPortalState | null>(null);
+
+/** overlay 들이 위젯 canvas 안으로 portal 하도록 하는 컨테이너 ref. WidgetProvider 안에서만 유효. */
+export function useWidgetPortalContainer(): HTMLElement | null {
+  return useContext(WidgetPortalContext)?.container ?? null;
+}
+
+/** 위젯 루트에서 사용. portal 대상 DOM 노드를 등록한다. */
+export function useSetWidgetPortalContainer(): Dispatch<
+  SetStateAction<HTMLElement | null>
+> {
+  const ctx = useContext(WidgetPortalContext);
+  if (!ctx) {
+    throw new Error(
+      "useSetWidgetPortalContainer must be used within <WidgetProvider>",
+    );
+  }
+  return ctx.setContainer;
+}
+
 export function WidgetProvider({
   config,
   children,
@@ -42,12 +75,19 @@ export function WidgetProvider({
   const queryClient = useMemo(createWidgetQueryClient, []);
   const supabase = useMemo(
     () => createSupabaseClient(config.storage),
-    [config.storage]
+    [config.storage],
+  );
+  const [container, setContainer] = useState<HTMLElement | null>(null);
+  const portalValue = useMemo(
+    () => ({ container, setContainer }),
+    [container],
   );
   return (
     <QueryClientProvider client={queryClient}>
       <SupabaseContext.Provider value={supabase}>
-        {children}
+        <WidgetPortalContext.Provider value={portalValue}>
+          {children}
+        </WidgetPortalContext.Provider>
       </SupabaseContext.Provider>
     </QueryClientProvider>
   );
