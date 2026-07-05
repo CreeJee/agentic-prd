@@ -4,8 +4,12 @@
   "type": "module",
   "description": "Vite dev-server sidecar for reading @agentic-prd/widget comments and specs",
   "license": "MIT",
+  "types": "./src/index.ts",
   "exports": {
-    ".": "./dist/index.js",
+    ".": {
+      "types": "./src/index.ts",
+      "default": "./src/index.ts"
+    },
     "./package.json": "./package.json"
   },
   "files": ["dist", "src"],
