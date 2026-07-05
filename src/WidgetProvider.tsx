@@ -59,7 +59,7 @@ export function useSetWidgetPortalContainer(): Dispatch<
   const ctx = useContext(WidgetPortalContext);
   if (!ctx) {
     throw new Error(
-      "useSetWidgetPortalContainer must be used within <WidgetProvider>",
+      "useSetWidgetPortalContainer must be used within <WidgetProvider>"
     );
   }
   return ctx.setContainer;
@@ -75,13 +75,10 @@ export function WidgetProvider({
   const queryClient = useMemo(createWidgetQueryClient, []);
   const supabase = useMemo(
     () => createSupabaseClient(config.storage),
-    [config.storage],
+    [config.storage]
   );
   const [container, setContainer] = useState<HTMLElement | null>(null);
-  const portalValue = useMemo(
-    () => ({ container, setContainer }),
-    [container],
-  );
+  const portalValue = useMemo(() => ({ container, setContainer }), [container]);
   return (
     <QueryClientProvider client={queryClient}>
       <SupabaseContext.Provider value={supabase}>

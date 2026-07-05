@@ -1,9 +1,9 @@
+import type { ComponentProps, ReactNode } from "react";
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
-import type { ComponentProps, ReactNode } from "react";
 import type { Point } from "../anchor";
 import { cn } from "../cn";
 import { useWidgetPortalContainer } from "../WidgetProvider";
@@ -44,7 +44,7 @@ export function PointPopover({
         sideOffset={sideOffset}
         className={cn(
           "pointer-events-auto max-w-[calc(100vw-24px)] overflow-hidden rounded-xl border-slate-200 bg-white p-0 shadow-xl",
-          className,
+          className
         )}
       >
         {children}

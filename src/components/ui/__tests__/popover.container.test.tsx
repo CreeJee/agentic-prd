@@ -18,7 +18,7 @@ describe("PopoverContent container", () => {
         <PopoverContent container={host} data-testid="popup">
           content
         </PopoverContent>
-      </Popover>,
+      </Popover>
     );
 
     const popup = screen.getByTestId("popup");
@@ -27,7 +27,7 @@ describe("PopoverContent container", () => {
     /** 확인: popup 이 host 밖 body 직속으로 새어나오지 않았는지 */
     const bodyChildren = Array.from(document.body.children);
     expect(bodyChildren.some((n) => n !== host && n.contains(popup))).toBe(
-      false,
+      false
     );
 
     document.body.removeChild(host);

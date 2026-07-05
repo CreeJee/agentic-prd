@@ -1,5 +1,11 @@
 import type { OverlayControllerComponent } from "overlay-kit";
-import { type ReactNode, useCallback, useEffect, useMemo, useState } from "react";
+import {
+  type ReactNode,
+  useCallback,
+  useEffect,
+  useMemo,
+  useState,
+} from "react";
 import { createPortal } from "react-dom";
 import { buildCapture, clusterIdOf, type Point, resolvePoint } from "./anchor";
 import {
@@ -213,7 +219,7 @@ function CommentWidgetInner({
         </CommentWidgetOverlayProvider>
       </CommentWidgetRoot>
     </WidgetPanelRuntimeProvider>,
-    document.body,
+    document.body
   );
 }
 

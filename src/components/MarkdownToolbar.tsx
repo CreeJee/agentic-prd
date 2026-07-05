@@ -69,7 +69,7 @@ function TBtn({
       onClick={onClick}
       className={cn(
         "text-slate-500 hover:bg-slate-100",
-        active && "bg-primary/10 text-primary hover:bg-primary/15",
+        active && "bg-primary/10 text-primary hover:bg-primary/15"
       )}
     >
       {children}
