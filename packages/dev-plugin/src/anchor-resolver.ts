@@ -10,10 +10,18 @@ const EXCLUDED_DIRS = new Set([
   "docs",
   ".next",
   ".vite",
-  "plugins"
+  "plugins",
+  "__tests__",
+  "coverage",
+  "build",
 ]);
 const SOURCE_EXT = new Set([".ts", ".tsx", ".js", ".jsx"]);
+const TEST_FILE_SUFFIX = [".test.ts", ".test.tsx", ".spec.ts", ".spec.tsx"];
 const MAX_CANDIDATES = 5;
+
+function isTestFile(name: string): boolean {
+  return TEST_FILE_SUFFIX.some((suffix) => name.endsWith(suffix));
+}
 
 async function walkSources(root: string): Promise<string[]> {
   const files: string[] = [];
@@ -31,6 +39,7 @@ async function walkSources(root: string): Promise<string[]> {
         if (EXCLUDED_DIRS.has(entry.name)) continue;
         await walk(full);
       } else if (entry.isFile()) {
+        if (isTestFile(entry.name)) continue;
         const dotIdx = entry.name.lastIndexOf(".");
         const ext = dotIdx >= 0 ? entry.name.slice(dotIdx) : "";
         if (SOURCE_EXT.has(ext)) files.push(full);

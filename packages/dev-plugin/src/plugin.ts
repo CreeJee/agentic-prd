@@ -55,21 +55,6 @@ function sendJSON(
   res.end(JSON.stringify(body));
 }
 
-async function readJSON(req: IncomingMessage): Promise<unknown> {
-  const chunks: Buffer[] = [];
-  for await (const chunk of req) {
-    chunks.push(chunk as Buffer);
-  }
-  if (chunks.length === 0) return undefined;
-  const raw = Buffer.concat(chunks).toString("utf8");
-  if (!raw.trim()) return undefined;
-  try {
-    return JSON.parse(raw);
-  } catch {
-    return undefined;
-  }
-}
-
 function parseQuery(url: string): URLSearchParams {
   const qIdx = url.indexOf("?");
   if (qIdx < 0) return new URLSearchParams();
@@ -226,9 +211,8 @@ export default function agenticPRDDev(options: AgenticPRDDevOptions): Plugin {
               return;
             }
             case "syncSpecs": {
-              void (await readJSON(req));
               const result = await handleSyncAll(supabase, specSyncDir, {
-                path: query.get("path") ?? undefined
+                path: query.get("path") ?? undefined,
               });
               sendJSON(res, 200, result);
               return;
@@ -250,10 +234,11 @@ export default function agenticPRDDev(options: AgenticPRDDevOptions): Plugin {
           }
         } catch (err) {
           const error = err as Error;
+          const includeStack = process.env["NODE_ENV"] !== "production";
           sendJSON(res, 500, {
             error: "internal",
             message: error.message,
-            stack: error.stack
+            stack: includeStack ? error.stack : undefined,
           });
         }
       });

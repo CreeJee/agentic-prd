@@ -8,8 +8,10 @@ description: Use when the user wants to list, inspect, resolve, or sync comments
 Discover the running dev server by walking up from the cwd until you find `pnpm-workspace.yaml`. In the same directory, look for `.agentic-prd.dev.json`:
 
 ```json
-{ "port": 5174, "prefix": "/__agentic-prd" }
+{ "port": 5173, "prefix": "/__agentic-prd" }
 ```
+
+The actual `port` reflects wherever Vite actually bound (Vite auto-picks the next free port if the configured one is taken), so always read it from the file rather than assuming.
 
 The base URL is `http://127.0.0.1:{port}{prefix}`.
 

@@ -122,9 +122,14 @@ export async function handleSyncOne(
 ): Promise<SyncedSpec | null> {
   const target = await supabase.getSpec(id);
   if (!target) return null;
-  const siblings = await supabase.listSpecs({ path: target.path });
+  /**
+   * collision 은 <specSyncDir> 안에서 파일 이름이 겹치는지 여부라, 같은 flat 디렉터리
+   * 를 공유하는 모든 spec 을 대상으로 판정해야 syncOne 과 syncAll 이 같은 파일명을
+   * 낸다. 이전에는 target.path 의 sibling 만 봐 다른 path 의 동명 spec 을 놓쳤다.
+   */
+  const allSpecs = await supabase.listSpecs({});
   const filenameById = resolveCollisions(
-    siblings.map((r) => ({ id: r.id, title: r.title })),
+    allSpecs.map((r) => ({ id: r.id, title: r.title })),
   );
   const filename = filenameById.get(id);
   if (!filename) return null;
