@@ -1,6 +1,6 @@
 import { readdir, readFile, stat } from "node:fs/promises";
 import { join, relative } from "node:path";
-import type { LocationCandidate, WidgetAnchor } from "./types";
+import type { LocationCandidate, WidgetAnchor } from "./types.js";
 
 const EXCLUDED_DIRS = new Set([
   "node_modules",

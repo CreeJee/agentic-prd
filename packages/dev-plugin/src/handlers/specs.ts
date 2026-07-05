@@ -1,8 +1,8 @@
 import { mkdir, unlink, writeFile } from "node:fs/promises";
 import { join } from "node:path";
-import { loadManifest, saveManifest } from "../manifest";
-import { resolveCollisions } from "../slug";
-import type { DevSupabase, SpecRow } from "../supabase";
+import { loadManifest, saveManifest } from "../manifest.js";
+import { resolveCollisions } from "../slug.js";
+import type { DevSupabase, SpecRow } from "../supabase.js";
 
 export interface SpecDTO {
   id: string;

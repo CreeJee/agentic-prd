@@ -1,6 +1,6 @@
-import { resolveAnchorLocation } from "../anchor-resolver";
-import type { DevSupabase, ThreadRow } from "../supabase";
-import type { LocationCandidate, WidgetAnchor } from "../types";
+import { resolveAnchorLocation } from "../anchor-resolver.js";
+import type { DevSupabase, ThreadRow } from "../supabase.js";
+import type { LocationCandidate, WidgetAnchor } from "../types.js";
 
 export interface CommentDTO {
   id: string;

@@ -7,15 +7,15 @@ import {
   handleListThreads,
   handleSetResolved,
   handleThreadLocation
-} from "./handlers/threads";
+} from "./handlers/threads.js";
 import {
   handleGetSpec,
   handleListSpecs,
   handleSyncAll,
   handleSyncOne
-} from "./handlers/specs";
-import { matchRoute } from "./router";
-import { createDevSupabase, type StorageConfig } from "./supabase";
+} from "./handlers/specs.js";
+import { matchRoute } from "./router.js";
+import { createDevSupabase, type StorageConfig } from "./supabase.js";
 
 export interface AgenticPRDDevOptions {
   storage: StorageConfig;

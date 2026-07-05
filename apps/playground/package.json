@@ -8,6 +8,7 @@
     "typecheck": "tsgo -p ./tsconfig.json --noEmit"
   },
   "dependencies": {
+    "@agentic-prd/dev-plugin": "workspace:*",
     "@agentic-prd/widget": "workspace:*",
     "react": "^19.2.7",
     "react-dom": "^19.2.7"
