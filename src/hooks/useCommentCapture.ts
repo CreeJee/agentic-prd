@@ -22,12 +22,12 @@ export interface CommentCaptureOptions {
    * pointerdown 핸들러(여기) → MutationObserver(트래커) 사이의 mutable 채널이라 ref가 맞다.
    */
   lastActivatedRef: RefObject<Element | null>;
-  /** add 모드에서 대상 클릭 시 호출(앵커 캡처). 안정 참조여야 함(useCallback) */
+  /** add 모드에서 대상 클릭 시 호출(앵커 캡처). 안정 참조여야 함(useCallback). bippy source lookup 이 async 라 Promise 반환. */
   onPlace: (
     clientX: number,
     clientY: number,
     target: EventTarget | null
-  ) => void;
+  ) => Promise<void>;
 }
 
 /**
@@ -70,7 +70,7 @@ export function useCommentCapture({
       if (inUI(e.target)) return;
       e.preventDefault();
       e.stopImmediatePropagation();
-      onPlace(e.clientX, e.clientY, e.target);
+      void onPlace(e.clientX, e.clientY, e.target);
     };
     const onFocusIn = (e: FocusEvent) => {
       if (inUI(e.target)) e.stopImmediatePropagation();

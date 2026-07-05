@@ -6,6 +6,7 @@ export type {
   CommentEntry,
   CommentThread,
   LegacyAnchor,
+  ReactSourceLocation,
   ScopeLevel,
   StoredAnchor,
 } from "./store";

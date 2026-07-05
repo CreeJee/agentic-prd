@@ -122,8 +122,8 @@ function CommentWidgetInner({
     : null;
 
   const captureAt = useCallback(
-    (clientX: number, clientY: number, target: EventTarget | null) => {
-      const cap = buildCapture(
+    async (clientX: number, clientY: number, target: EventTarget | null) => {
+      const cap = await buildCapture(
         clientX,
         clientY,
         target,

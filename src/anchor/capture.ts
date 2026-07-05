@@ -1,7 +1,7 @@
 import { clamp } from "es-toolkit";
 import type { Anchor, ScopeLevel } from "../store";
 import { COMMENT_ROOT, OVERLAY_SEL } from "./constants";
-import { reactPathOf } from "./fiber";
+import { reactContextOf } from "./fiber";
 import { overlayKeyOf } from "./overlays";
 import { cssPathWithin } from "./selectors";
 
@@ -23,13 +23,14 @@ export interface Capture {
 /**
  * 클릭 지점의 엘리먼트로 앵커를 만든다.
  * overlay 내부면 부모 링크(overlayInfo.parentKey)를 따라 바깥→안 중첩 체인을 구성한다.
+ * bippy 로 fiber traverse + source-map 조회를 하므로 비동기다.
  */
-export function buildCapture(
+export async function buildCapture(
   clientX: number,
   clientY: number,
   target: EventTarget | null,
   overlayInfo: OverlayInfoMap
-): Capture {
+): Promise<Capture> {
   const el =
     target instanceof Element
       ? target
@@ -52,12 +53,14 @@ export function buildCapture(
         key = info?.parentKey;
       }
     }
+    const reactContext = await reactContextOf(el);
     anchor = {
       scopeChain,
       selector: cssPathWithin(el, root),
       relX: r.width ? clamp((clientX - r.left) / r.width, 0, 1) : 0.5,
       relY: r.height ? clamp((clientY - r.top) / r.height, 0, 1) : 0.5,
-      reactPath: reactPathOf(el),
+      reactPath: reactContext.path,
+      reactSource: reactContext.source,
     };
   }
   const xPct = (clientX / document.documentElement.clientWidth) * 100;

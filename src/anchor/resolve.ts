@@ -25,6 +25,7 @@ export function normalizeAnchor(
     relX: number;
     relY: number;
     reactPath?: string[];
+    reactSource?: Anchor["reactSource"];
     triggerSelector?: string;
   };
   const scopeChain: ScopeLevel[] =
@@ -42,6 +43,7 @@ export function normalizeAnchor(
     relX: legacy.relX,
     relY: legacy.relY,
     reactPath: legacy.reactPath,
+    reactSource: legacy.reactSource,
   };
 }
 

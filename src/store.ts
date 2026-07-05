@@ -49,6 +49,22 @@ export interface ScopeLevel {
   triggerSelector?: string;
 }
 
+/** 코멘트 앵커가 가리키는 가장 유력한 React component 소스 위치 */
+export interface ReactSourceLocation {
+  /** Fiber type/displayName 또는 owner stack 에서 얻은 component 이름 */
+  componentName: string;
+  /** list item 식별 보강용 Fiber key */
+  key?: string;
+  /** `_debugOwner`가 있으면 함께 저장해 owner tree 를 나중에 대조한다. */
+  ownerName?: string;
+  /** 번들러 origin/query 를 걷어낸 파일명 또는 URL path */
+  fileName: string;
+  /** 런타임 stack/debugSource 가 제공한 line. 번들러별로 부정확할 수 있다. */
+  lineNumber?: number;
+  /** 런타임 stack/debugSource 가 제공한 column. 번들러별로 부정확할 수 있다. */
+  columnNumber?: number;
+}
+
 /**
  * 엘리먼트 기준 핀 앵커.
  * 절대좌표 대신 "어떤 DOM 엘리먼트의 어느 지점"인지로 고정 →
@@ -65,6 +81,8 @@ export interface Anchor {
   relY: number;
   /** 옵셔널: 리액트 로직 위치(안쪽→바깥 named 컴포넌트 경로). 위치고정엔 안 쓰고 참고용 */
   reactPath?: string[];
+  /** 옵셔널: dev-server/open-file 연동용 대표 component source */
+  reactSource?: ReactSourceLocation;
 }
 
 /**
@@ -78,6 +96,7 @@ export interface LegacyAnchor {
   relX: number;
   relY: number;
   reactPath?: string[];
+  reactSource?: ReactSourceLocation;
   triggerSelector?: string;
 }
 
