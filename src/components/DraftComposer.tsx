@@ -1,6 +1,7 @@
 import { valibotResolver } from "@hookform/resolvers/valibot";
 import { Controller, useForm } from "react-hook-form";
 import * as v from "valibot";
+import { Button } from "@/components/ui/button";
 import type { Point } from "../anchor";
 import { MarkdownEditor } from "./MarkdownEditor";
 import { PointPopover } from "./PointPopover";
@@ -60,21 +61,24 @@ export function DraftComposer({
           )}
         </div>
         <div className="flex items-center justify-end gap-2">
-          <button
+          <Button
             type="button"
+            variant="ghost"
+            size="sm"
             onClick={onCancel}
-            className="rounded-lg px-3 py-1.5 text-slate-500 text-sm hover:bg-slate-50"
+            className="text-slate-500 hover:bg-slate-50"
           >
             취소
-          </button>
-          <button
+          </Button>
+          <Button
             type="button"
+            variant="default"
+            size="sm"
             disabled={!isValid}
             onClick={submit}
-            className="rounded-lg bg-primary px-3 py-1.5 font-medium text-white text-sm disabled:opacity-40"
           >
             코멘트
-          </button>
+          </Button>
         </div>
       </PointPopover>
     </>
