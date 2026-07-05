@@ -16,6 +16,9 @@ import {
 } from "react";
 import { Controller, useForm } from "react-hook-form";
 import * as v from "valibot";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { cn } from "../cn";
 import { MarkdownEditor } from "../components/MarkdownEditor";
 import type { SpecDoc, SpecStatus } from "./store";
 import {
@@ -288,22 +291,27 @@ function SpecList({
           <span className="typo-regular-medium text-slate-900">기획 문서</span>
           <span className="truncate text-xs text-slate-400">{pageLabel}</span>
         </div>
-        <button
+        <Button
           type="button"
+          variant="ghost"
+          size="icon-sm"
           onClick={onClose}
-          className="flex size-7 items-center justify-center rounded-md text-slate-400 hover:bg-slate-100"
+          aria-label="닫기"
+          className="text-slate-400 hover:bg-slate-100"
         >
           <XIcon className="size-4" />
-        </button>
+        </Button>
       </div>
 
       <div className="flex flex-col gap-1.5 overflow-y-auto p-3">
         <div className="flex gap-1.5">
-          <button
+          <Button
             type="button"
+            variant="outline"
+            size="lg"
             onClick={onCreate}
             disabled={creating}
-            className="flex flex-1 items-center justify-center gap-1.5 rounded-lg border border-primary border-dashed py-2.5 text-sm font-medium text-primary hover:bg-orange-50 disabled:opacity-50"
+            className="flex-1 border-primary border-dashed font-medium text-primary hover:bg-orange-50"
           >
             {creating ? (
               <Loader2Icon className="size-4 animate-spin" />
@@ -311,39 +319,43 @@ function SpecList({
               <PlusIcon className="size-4" />
             )}
             {creating ? "생성 중…" : "새 문서"}
-          </button>
-          <button
+          </Button>
+          <Button
             type="button"
+            variant="outline"
+            size="lg"
             onClick={() => setLinkMode(!linkMode)}
-            className={`flex items-center justify-center gap-1.5 rounded-lg border border-dashed px-3 py-2.5 text-sm font-medium transition-colors ${
+            aria-pressed={linkMode}
+            className={cn(
+              "border-dashed font-medium",
               linkMode
                 ? "border-blue-400 bg-blue-50 text-blue-600"
                 : "border-slate-300 text-slate-500 hover:border-blue-400 hover:bg-blue-50 hover:text-blue-600"
-            }`}
+            )}
             title="Google Docs 연결"
           >
             <LinkIcon className="size-4" />
-          </button>
+          </Button>
         </div>
 
         {linkMode && (
           <div className="flex flex-col gap-2 rounded-lg border border-blue-200 bg-blue-50/50 p-3">
-            <input
+            <Input
               type="text"
               value={linkTitle}
               onChange={(e) => setLinkTitle(e.target.value)}
               placeholder="문서 제목"
-              className="w-full rounded-md border border-slate-200 bg-white px-2.5 py-1.5 text-sm outline-none focus:border-blue-400"
+              className="focus:border-blue-400"
             />
-            <input
+            <Input
               type="text"
               value={linkUrl}
               onChange={(e) => setLinkUrl(e.target.value)}
               placeholder="Google Docs URL 붙여넣기"
-              className="w-full rounded-md border border-slate-200 bg-white px-2.5 py-1.5 text-sm outline-none focus:border-blue-400"
               onKeyDown={(e) => {
                 if (e.key === "Enter") handleLinkSubmit();
               }}
+              className="focus:border-blue-400"
             />
             <div className="flex items-center justify-between">
               <span className="text-xs text-slate-400">
@@ -351,14 +363,16 @@ function SpecList({
                   ? "올바른 Google Docs URL을 입력해 주세요"
                   : "링크 공유가 설정된 문서만 표시돼요"}
               </span>
-              <button
+              <Button
                 type="button"
+                variant="default"
+                size="xs"
                 disabled={!parseGoogleDocsId(linkUrl)}
                 onClick={handleLinkSubmit}
-                className="rounded-md bg-blue-500 px-3 py-1 text-xs font-medium text-white hover:bg-blue-600 disabled:opacity-40"
+                className="bg-blue-500 text-white hover:bg-blue-600"
               >
                 연결
-              </button>
+              </Button>
             </div>
           </div>
         )}
