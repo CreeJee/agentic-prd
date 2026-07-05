@@ -62,7 +62,7 @@ import { TableHoverActionsPlugin } from "./table/TableHoverActions";
  */
 const ListTabIndentationExtension = defineExtension({
   dependencies: [ListExtension],
-  name: "@portone/comment-widget/ListTabIndentation",
+  name: "Widget/ListTabIndentation",
   register(editor) {
     return editor.registerCommand<KeyboardEvent>(
       KEY_TAB_COMMAND,
@@ -318,7 +318,7 @@ export function MarkdownEditor({
             : []),
         ],
         editable,
-        name: "@portone/comment-widget/MarkdownEditor",
+        name: "Widget/MarkdownEditor",
         namespace: "comment-md",
         theme: THEME,
       }),
@@ -333,7 +333,7 @@ export function MarkdownEditor({
           ref={setScrollElem}
           className={cn(
             "relative flex-1",
-            editable && "overflow-y-auto px-3 py-2"
+            editable && "overflow-y-auto px-3 py-1"
           )}
         >
           {placeholder ? (
@@ -344,7 +344,7 @@ export function MarkdownEditor({
                 editable && "h-full"
               )}
               placeholder={
-                <div className="pointer-events-none absolute top-2 left-3 text-slate-400">
+                <div className="pointer-events-none absolute top-1 left-3 text-slate-400">
                   {placeholder}
                 </div>
               }
