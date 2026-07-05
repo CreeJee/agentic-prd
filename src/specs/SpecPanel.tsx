@@ -18,6 +18,13 @@ import { Controller, useForm } from "react-hook-form";
 import * as v from "valibot";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { cn } from "../cn";
 import { MarkdownEditor } from "../components/MarkdownEditor";
 import type { SpecDoc, SpecStatus } from "./store";
@@ -450,7 +457,7 @@ function SpecEditor({
   const { data: doc } = useSpecDoc(path, docId);
   const saveSpec = useSaveSpec();
   const { mutateAsync: deleteSpec, isPending: loadingDelete } = useDeleteSpec();
-  const { control, getValues, register, reset, watch } = useForm<{
+  const { control, getValues, register, reset } = useForm<{
     title: string;
     status: SpecStatus;
     body: string;
@@ -463,7 +470,6 @@ function SpecEditor({
       body: doc?.body ?? "",
     },
   });
-  const status = watch("status");
   const saveTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const initializedDocId = useRef<string | null>(null);
 
@@ -502,33 +508,36 @@ function SpecEditor({
         data-comment-no-capture=""
         className="flex cursor-move items-center justify-between gap-2 border-slate-100 border-b px-3 py-2.5"
       >
-        <button
+        <Button
           type="button"
+          variant="ghost"
+          size="icon-sm"
           onClick={() => {
             flushSave();
             onBack();
           }}
-          className="flex size-7 shrink-0 items-center justify-center rounded-md text-slate-500 hover:bg-slate-100"
+          className="shrink-0 text-slate-500 hover:bg-slate-100"
           title="목록"
+          aria-label="목록"
         >
           <ChevronLeftIcon className="size-4" />
-        </button>
-        <input
+        </Button>
+        <Input
           {...register("title", {
             onChange: (e) => scheduleSave({ title: e.target.value }),
           })}
           placeholder="문서 제목"
           onBlur={flushSave}
-          className="min-w-0 flex-1 rounded-md px-1.5 py-1 text-sm font-medium text-slate-900 outline-none hover:bg-slate-50 focus:bg-slate-50"
+          className="min-w-0 flex-1 border-transparent bg-transparent px-1.5 py-1 font-medium text-sm text-slate-900 hover:bg-slate-50 focus:bg-slate-50"
         />
         <Controller
           control={control}
           name="status"
           render={({ field }) => (
-            <select
+            <Select
               value={field.value}
-              onChange={(e) => {
-                const next = e.target.value as SpecStatus;
+              onValueChange={(next: SpecStatus | null) => {
+                if (!next) return;
                 field.onChange(next);
                 saveSpec.mutate({
                   path,
@@ -537,26 +546,39 @@ function SpecEditor({
                   author,
                 });
               }}
-              className={`h-7 shrink-0 rounded-full border-0 px-2 text-xs font-medium outline-none ${STATUS_BADGE[status]}`}
             >
-              {(["DRAFT", "REVIEW", "CONFIRMED"] as SpecStatus[]).map((s) => (
-                <option key={s} value={s}>
-                  {SPEC_STATUS_LABEL[s]}
-                </option>
-              ))}
-            </select>
+              <SelectTrigger
+                size="sm"
+                className={cn(
+                  "h-7 shrink-0 rounded-full border-0 px-2 text-xs font-medium",
+                  STATUS_BADGE[field.value]
+                )}
+              >
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                {(["DRAFT", "REVIEW", "CONFIRMED"] as SpecStatus[]).map((s) => (
+                  <SelectItem key={s} value={s}>
+                    {SPEC_STATUS_LABEL[s]}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
           )}
         />
-        <button
+        <Button
           type="button"
+          variant="ghost"
+          size="icon-sm"
           onClick={() => {
             flushSave();
             onClose();
           }}
-          className="flex size-7 shrink-0 items-center justify-center rounded-md text-slate-400 hover:bg-slate-100"
+          className="shrink-0 text-slate-400 hover:bg-slate-100"
+          aria-label="닫기"
         >
           <XIcon className="size-4" />
-        </button>
+        </Button>
       </div>
       <div className="flex items-center justify-between px-4 pt-1.5 text-xs text-slate-400">
         <span>Page: {pageLabel}</span>
