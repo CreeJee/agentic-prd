@@ -631,14 +631,16 @@ function SpecEditor({
             ? `최종 수정 · ${doc.updatedBy} · ${timeAgo(doc.updatedAt)}`
             : "작성 중"}
         </span>
-        <button
+        <Button
           type="button"
+          variant="ghost"
+          size="xs"
           disabled={loadingDelete}
           onClick={async () => {
             await deleteSpec({ path, id: docId });
             onDeleted();
           }}
-          className="flex items-center gap-1 rounded px-1.5 py-1 text-slate-400 hover:bg-red-50 hover:text-red-500 disabled:opacity-50"
+          className="text-slate-400 hover:bg-red-50 hover:text-red-500"
         >
           {loadingDelete ? (
             <Loader2Icon className="size-3.5 animate-spin" />
@@ -646,7 +648,7 @@ function SpecEditor({
             <Trash2Icon className="size-3.5" />
           )}
           {loadingDelete ? "삭제 중…" : "삭제"}
-        </button>
+        </Button>
       </div>
     </>
   );
