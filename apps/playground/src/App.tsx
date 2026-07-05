@@ -1,19 +1,17 @@
-import { CommentWidget } from "../../../packages/widget/src";
 import {
+  CommentWidget,
   Dialog,
   DialogClose,
   DialogContent,
   DialogDescription,
   DialogTitle,
   DialogTrigger,
-} from "../../../packages/widget/src/components/ui/dialog";
-import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "../../../packages/widget/src/components/ui/select";
+} from "@agentic-prd/widget";
 
 /**
  * 위젯 앵커 동작을 시험하기 위한 키친싱크 페이지.

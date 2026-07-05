@@ -11,3 +11,18 @@ export type {
   StoredAnchor,
 } from "./store";
 export type { SupabaseStorageConfig } from "./supabase";
+export {
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogDescription,
+  DialogTitle,
+  DialogTrigger,
+} from "./components/ui/dialog";
+export {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "./components/ui/select";
