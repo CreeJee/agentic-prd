@@ -43,7 +43,7 @@ export function App() {
             <DialogTrigger className="rounded-lg bg-slate-900 px-4 py-2 font-medium text-sm text-white hover:bg-slate-700">
               Dialog 열기
             </DialogTrigger>
-            <DialogContent className="-translate-x-1/2 -translate-y-1/2 fixed top-1/2 left-1/2 z-50 w-96 rounded-xl bg-white p-5 shadow-xl">
+            <DialogContent className="w-96 rounded-xl bg-white p-5 shadow-xl">
               <DialogTitle className="font-semibold text-lg">
                 예제 다이얼로그
               </DialogTitle>
@@ -69,7 +69,7 @@ export function App() {
                   <SelectTrigger className="mt-1 inline-flex w-full items-center justify-between rounded-lg border border-slate-200 px-2.5 py-1.5 text-sm">
                     <SelectValue placeholder="선택" />
                   </SelectTrigger>
-                  <SelectContent className="z-[60] rounded-lg border border-slate-200 bg-white shadow-lg">
+                  <SelectContent className="rounded-lg border border-slate-200 bg-white shadow-lg">
                     {["KRW", "USD", "JPY"].map((c) => (
                       <SelectItem
                         key={c}
@@ -89,7 +89,7 @@ export function App() {
                   <DialogTrigger className="rounded-lg bg-primary px-3 py-1.5 text-sm text-white">
                     안쪽 다이얼로그 열기
                   </DialogTrigger>
-                  <DialogContent className="-translate-x-1/2 -translate-y-1/2 fixed top-1/2 left-1/2 z-[56] w-80 rounded-xl bg-white p-5 shadow-xl">
+                  <DialogContent className="w-80 rounded-xl bg-white p-5 shadow-xl">
                     <DialogTitle className="font-semibold text-base">
                       안쪽 다이얼로그
                     </DialogTitle>
