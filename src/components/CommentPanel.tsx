@@ -1,4 +1,5 @@
 import { CheckIcon, XIcon } from "lucide-react";
+import { Button } from "@/components/ui/button";
 import { cn } from "../cn";
 import { authorInitial, snippet, threadAuthor, timeAgo } from "../format";
 import type { CommentThread } from "../store";
@@ -74,13 +75,16 @@ export function CommentPanel({
     <div className="pointer-events-auto fixed right-5 bottom-20 z-[99992] flex max-h-[70vh] w-80 flex-col rounded-xl border border-slate-200 bg-white shadow-xl">
       <div className="flex items-center justify-between border-slate-100 border-b px-4 py-2.5">
         <span className="font-medium text-slate-900 text-sm">코멘트</span>
-        <button
+        <Button
           type="button"
+          variant="ghost"
+          size="icon-sm"
           onClick={onClose}
-          className="flex size-6 items-center justify-center rounded text-slate-400 hover:bg-slate-100"
+          aria-label="닫기"
+          className="text-slate-400 hover:bg-slate-100"
         >
           <XIcon className="size-4" />
-        </button>
+        </Button>
       </div>
 
       <div className="flex flex-col gap-1 overflow-y-auto p-2">
