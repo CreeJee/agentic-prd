@@ -277,7 +277,7 @@ export function ThreadPopover({
                     <Button
                       type="button"
                       variant="ghost"
-                      size="xs"
+                      size="sm"
                       onClick={() => setEditingId(null)}
                       className="text-slate-500 hover:bg-slate-50"
                     >
@@ -286,7 +286,7 @@ export function ThreadPopover({
                     <Button
                       type="submit"
                       variant="default"
-                      size="xs"
+                      size="sm"
                       disabled={
                         !editForm.formState.isValid || loadingUpdateComment
                       }
