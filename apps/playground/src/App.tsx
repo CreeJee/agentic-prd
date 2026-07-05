@@ -1,4 +1,4 @@
-import { CommentWidget } from "../../src";
+import { CommentWidget } from "../../../packages/widget/src";
 import {
   Dialog,
   DialogClose,
@@ -6,14 +6,14 @@ import {
   DialogDescription,
   DialogTitle,
   DialogTrigger,
-} from "../../src/components/ui/dialog";
+} from "../../../packages/widget/src/components/ui/dialog";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "../../src/components/ui/select";
+} from "../../../packages/widget/src/components/ui/select";
 
 /**
  * 위젯 앵커 동작을 시험하기 위한 키친싱크 페이지.

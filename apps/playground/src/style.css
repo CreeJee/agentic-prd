@@ -5,8 +5,8 @@
 
 @custom-variant dark (&:is(.dark *));
 
-/* Vite root(./playground) 밖의 위젯 소스도 Tailwind가 스캔하도록 명시 */
-@source "../../src";
+/* Vite root(./apps/playground) 밖의 위젯 소스도 Tailwind가 스캔하도록 명시 */
+@source "../../../packages/widget/src";
 
 @theme inline {
   --font-heading: var(--font-sans);
