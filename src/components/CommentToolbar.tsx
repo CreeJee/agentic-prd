@@ -3,6 +3,8 @@ import {
   MessageSquarePlusIcon,
   MessagesSquareIcon,
 } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import { cn } from "../cn";
 import { authorInitial } from "../format";
 import { DraggableToolbar } from "./DraggableToolbar";
@@ -40,7 +42,7 @@ export function CommentToolbar({
   return (
     <DraggableToolbar>
       {nameEditing ? (
-        <input
+        <Input
           ref={(ref) => ref?.focus({ focusVisible: true })}
           value={nameInput}
           placeholder="이름 입력"
@@ -49,63 +51,72 @@ export function CommentToolbar({
           onKeyDown={(e) => {
             if (e.key === "Enter") onCommitName();
           }}
-          className="h-7 w-28 rounded-full border border-slate-200 px-2.5 text-sm outline-none focus:border-primary"
+          className="h-7 w-28 rounded-full px-2.5 text-sm focus:border-primary"
         />
       ) : (
-        <button
+        <Button
           type="button"
+          variant="ghost"
+          size="sm"
           onClick={onBeginNameEdit}
-          className="flex items-center gap-1.5 rounded-full px-2 py-1 text-slate-600 text-sm hover:bg-slate-50"
+          className="rounded-full text-slate-600 hover:bg-slate-50"
           title="이름 설정"
         >
-          <span className="flex size-6 items-center justify-center rounded-full bg-primary/10 font-medium text-primary text-xs">
+          <span className="flex size-5 items-center justify-center rounded-full bg-primary/10 font-medium text-primary text-[11px]">
             {authorInitial(userName)}
           </span>
           <span className="max-w-24 truncate">{userName || "이름 설정"}</span>
-        </button>
+        </Button>
       )}
 
       <div className="h-5 w-px bg-slate-200" />
 
-      <button
+      <Button
         type="button"
+        variant="ghost"
+        size="sm"
         onClick={onToggleCommentPanel}
-        className="flex items-center gap-1 rounded-full px-2.5 py-1 text-sm hover:bg-slate-50"
+        className="rounded-full text-slate-600 hover:bg-slate-50"
         title="코멘트 목록"
       >
         <MessagesSquareIcon className="size-4" />
         목록 {threadCount}
-      </button>
+      </Button>
 
-      <button
+      <Button
         type="button"
+        variant="ghost"
+        size="sm"
         onClick={onToggleSpecPanel}
+        aria-pressed={specOpen}
         className={cn(
-          "flex items-center gap-1 rounded-full px-2.5 py-1 text-sm hover:bg-slate-50",
+          "rounded-full hover:bg-slate-50",
           specOpen ? "text-primary" : "text-slate-600"
         )}
         title="화면 기획 문서"
       >
         <FileTextIcon className="size-4" />
         문서
-      </button>
+      </Button>
 
-      <button
+      <Button
         type="button"
+        variant="default"
+        size="sm"
         onClick={onToggleAddMode}
         disabled={!addMode && !canComment}
         title={!addMode && !canComment ? "이름을 먼저 설정하세요" : undefined}
+        aria-pressed={addMode}
         className={cn(
-          "flex items-center gap-1.5 rounded-full px-3 py-1.5 font-medium text-sm transition-colors",
+          "rounded-full font-medium",
           addMode
-            ? "bg-primary text-white"
-            : "bg-slate-900 text-white hover:bg-slate-700",
-          "disabled:cursor-not-allowed disabled:bg-slate-300 disabled:hover:bg-slate-300"
+            ? "bg-primary text-white hover:bg-primary/90"
+            : "bg-slate-900 text-white hover:bg-slate-700"
         )}
       >
         <MessageSquarePlusIcon className="size-4" />
         {addMode ? "취소" : "코멘트"}
-      </button>
+      </Button>
     </DraggableToolbar>
   );
 }
