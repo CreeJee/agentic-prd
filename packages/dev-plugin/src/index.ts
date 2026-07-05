@@ -1,5 +1,9 @@
-/**
- * @agentic-prd/dev-plugin entry.
- * 실제 Vite Plugin 팩토리는 Task 14 에서 채운다.
- */
-export {};
+export { default } from "./plugin";
+export type { AgenticPRDDevOptions } from "./plugin";
+export type { CommentDTO, ThreadDTO } from "./handlers/threads";
+export type { SpecDTO, SyncedSpec } from "./handlers/specs";
+export type {
+  LocationCandidate,
+  LocationKind,
+  WidgetAnchor
+} from "./types";
