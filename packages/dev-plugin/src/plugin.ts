@@ -96,12 +96,7 @@ export default function agenticPRDDev(options: AgenticPRDDevOptions): Plugin {
     name: "agentic-prd:dev",
     apply: "serve",
     configureServer(server: ViteDevServer) {
-      const port = server.config.server?.port ?? 5173;
-      writeFileSync(
-        discoveryPath,
-        `${JSON.stringify({ port, prefix }, null, 2)}\n`,
-        "utf8"
-      );
+      const configuredPort = server.config.server?.port ?? 5173;
       const cleanup = () => {
         try {
           if (existsSync(discoveryPath)) unlinkSync(discoveryPath);
@@ -109,6 +104,36 @@ export default function agenticPRDDev(options: AgenticPRDDevOptions): Plugin {
           /* best effort */
         }
       };
+      const writeDiscovery = (port: number) => {
+        writeFileSync(
+          discoveryPath,
+          `${JSON.stringify({ port, prefix }, null, 2)}\n`,
+          "utf8",
+        );
+      };
+      /**
+       * Vite 는 요청 port 가 사용 중이면 자동으로 다음 port 로 fallback 한다.
+       * 그래서 discovery 파일은 실제로 listen 이 성립한 시점에 실주소로 기록해야
+       * skill 이 올바른 port 로 curl 할 수 있다.
+       */
+      const httpServer = server.httpServer;
+      if (httpServer?.listening) {
+        const address = httpServer.address();
+        writeDiscovery(
+          typeof address === "object" && address ? address.port : configuredPort,
+        );
+      } else if (httpServer) {
+        httpServer.once("listening", () => {
+          const address = httpServer.address();
+          writeDiscovery(
+            typeof address === "object" && address
+              ? address.port
+              : configuredPort,
+          );
+        });
+      } else {
+        writeDiscovery(configuredPort);
+      }
       server.httpServer?.on("close", cleanup);
       process.once("SIGINT", cleanup);
       process.once("SIGTERM", cleanup);

@@ -13,6 +13,7 @@
       "dependsOn": ["^build"]
     },
     "play": {
+      "dependsOn": ["^build"],
       "cache": false,
       "persistent": true
     }

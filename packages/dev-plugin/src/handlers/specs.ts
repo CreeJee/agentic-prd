@@ -64,6 +64,14 @@ export async function handleSyncAll(
 
   await mkdir(specSyncDir, { recursive: true });
   const manifest = await loadManifest(specSyncDir);
+  /**
+   * 이번 sync 대상 manifest 스냅샷. 아래 write 루프가 `manifest.byId` 를 갱신한 뒤에도
+   * "이전에 무슨 파일이었는지" 를 알아 stale 판정에 쓰기 위함. 이 스냅샷이 없으면
+   * rename 감지가 실패해 이전 이름의 파일이 orphan 으로 남는다.
+   */
+  const previousById: Record<string, { file: string; syncedAt: number }> = {
+    ...manifest.byId,
+  };
   const filenameById = resolveCollisions(
     specs.map(({ id, title }) => ({ id, title })),
   );
@@ -88,12 +96,18 @@ export async function handleSyncAll(
   }
 
   const removed: string[] = [];
-  for (const [id, entry] of Object.entries(manifest.byId)) {
-    if (!filenameById.has(id) || !writtenFiles.has(entry.file)) {
+  /**
+   * path 필터 sync 는 다른 path 의 manifest 항목까지 orphan 취급해 삭제하면 안 된다
+   * (fetch 범위 밖이라 filenameById 에도 없음). global sync 일 때만 stale 을 청소한다.
+   */
+  if (filter.path === undefined) {
+    for (const [id, entry] of Object.entries(previousById)) {
+      const newFilename = filenameById.get(id);
+      if (newFilename && newFilename === entry.file) continue;
       const stale = join(specSyncDir, entry.file);
       await unlink(stale).catch(() => undefined);
       removed.push(entry.file);
-      delete manifest.byId[id];
+      if (!newFilename) delete manifest.byId[id];
     }
   }
 
