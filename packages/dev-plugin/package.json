@@ -1,0 +1,41 @@
+{
+  "name": "@agentic-prd/dev-plugin",
+  "version": "0.0.0",
+  "type": "module",
+  "description": "Vite dev-server sidecar for reading @agentic-prd/widget comments and specs",
+  "license": "MIT",
+  "exports": {
+    ".": "./dist/index.js",
+    "./package.json": "./package.json"
+  },
+  "files": ["dist", "src"],
+  "publishConfig": {
+    "access": "public",
+    "main": "./dist/index.js",
+    "module": "./dist/index.js",
+    "types": "./dist/index.d.ts",
+    "exports": {
+      ".": { "types": "./dist/index.d.ts", "import": "./dist/index.js" },
+      "./package.json": "./package.json"
+    }
+  },
+  "scripts": {
+    "build": "tsdown",
+    "dev": "tsdown --watch",
+    "typecheck": "tsgo -p ./tsconfig.json --noEmit",
+    "test": "vitest run --passWithNoTests",
+    "lint": "pnpm biome check . --diagnostic-level=error --max-diagnostics=200"
+  },
+  "peerDependencies": {
+    "vite": ">=5"
+  },
+  "dependencies": {
+    "@supabase/supabase-js": "^2.110.0"
+  },
+  "devDependencies": {
+    "@types/node": "^26.1.0",
+    "tsdown": "^0.22.3",
+    "vite": "^8.1.3",
+    "vitest": "4.1.9"
+  }
+}
