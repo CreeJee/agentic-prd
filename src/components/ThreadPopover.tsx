@@ -11,6 +11,7 @@ import {
 import { useEffect, useRef, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import * as v from "valibot";
+import { Button } from "@/components/ui/button";
 import type { Point } from "../anchor";
 import { cn } from "../cn";
 import { timeAgo } from "../format";
@@ -111,14 +112,17 @@ export function ThreadPopover({
       <div className="flex shrink-0 items-center justify-between border-slate-100 border-b px-3 py-2">
         <div className="flex items-center gap-1">
           {onBack && (
-            <button
+            <Button
               type="button"
+              variant="ghost"
+              size="icon-sm"
               title="겹친 코멘트로 돌아가기"
               onClick={onBack}
-              className="-ml-1 flex size-6 items-center justify-center rounded text-slate-400 hover:bg-slate-100"
+              className="-ml-1 text-slate-400 hover:bg-slate-100"
+              aria-label="목록으로"
             >
               <ChevronLeftIcon className="size-4" />
-            </button>
+            </Button>
           )}
           <span className="font-medium text-slate-500 text-xs">
             코멘트 {thread.comments.length}
@@ -126,17 +130,22 @@ export function ThreadPopover({
         </div>
         <div className="flex items-center gap-1">
           {onRelocate && (
-            <button
+            <Button
               type="button"
+              variant="ghost"
+              size="icon-sm"
               title="재배치 (핀 위치 다시 잡기)"
               onClick={onRelocate}
-              className="flex size-6 items-center justify-center rounded text-slate-400 hover:bg-slate-100 hover:text-primary"
+              className="text-slate-400 hover:bg-slate-100 hover:text-primary"
+              aria-label="재배치"
             >
               <MoveIcon className="size-4" />
-            </button>
+            </Button>
           )}
-          <button
+          <Button
             type="button"
+            variant="ghost"
+            size="icon-sm"
             title={thread.resolved ? "다시 열기" : "해결됨으로 표시"}
             onClick={() => {
               toggleResolved({ path: thread.path, threadId: thread.id }).then(
@@ -145,39 +154,46 @@ export function ThreadPopover({
             }}
             disabled={loadingToggleResolved}
             className={cn(
-              "flex size-6 items-center justify-center rounded hover:bg-slate-100",
+              "hover:bg-slate-100",
               thread.resolved ? "text-green-600" : "text-slate-400"
             )}
+            aria-label="해결 토글"
           >
             {loadingToggleResolved ? (
               <Loader2Icon className="size-4 animate-spin" />
             ) : (
               <CheckIcon className="size-4" />
             )}
-          </button>
-          <button
+          </Button>
+          <Button
             type="button"
+            variant="ghost"
+            size="icon-sm"
             title="삭제"
             onClick={() =>
               deleteThread({ path: thread.path, threadId: thread.id })
             }
             disabled={loadingDeleteThread}
-            className="flex size-6 items-center justify-center rounded text-slate-400 hover:bg-slate-100 hover:text-red-500 disabled:opacity-50"
+            className="text-slate-400 hover:bg-slate-100 hover:text-red-500"
+            aria-label="스레드 삭제"
           >
             {loadingDeleteThread ? (
               <Loader2Icon className="size-4 animate-spin" />
             ) : (
               <Trash2Icon className="size-4" />
             )}
-          </button>
-          <button
+          </Button>
+          <Button
             type="button"
+            variant="ghost"
+            size="icon-sm"
             title="닫기"
             onClick={onClose}
-            className="flex size-6 items-center justify-center rounded text-slate-400 hover:bg-slate-100"
+            className="text-slate-400 hover:bg-slate-100"
+            aria-label="닫기"
           >
             <XIcon className="size-4" />
-          </button>
+          </Button>
         </div>
       </div>
 
@@ -195,16 +211,21 @@ export function ThreadPopover({
                 <span className="text-slate-400 text-xs">{timeAgo(c.at)}</span>
                 {editingId !== c.id && (
                   <div className="ml-auto flex items-center gap-0.5 opacity-0 transition-opacity group-hover:opacity-100">
-                    <button
+                    <Button
                       type="button"
+                      variant="ghost"
+                      size="icon-xs"
                       title="본문 편집"
                       onClick={() => startEdit(c.id, c.text)}
-                      className="flex size-5 items-center justify-center rounded text-slate-300 hover:bg-slate-100 hover:text-slate-500"
+                      className="text-slate-300 hover:bg-slate-100 hover:text-slate-500"
+                      aria-label="편집"
                     >
                       <PencilIcon className="size-3" />
-                    </button>
-                    <button
+                    </Button>
+                    <Button
                       type="button"
+                      variant="ghost"
+                      size="icon-xs"
                       title="코멘트 삭제"
                       disabled={loadingDeleteComment}
                       onClick={() =>
@@ -214,14 +235,15 @@ export function ThreadPopover({
                           commentId: c.id,
                         })
                       }
-                      className="flex size-5 items-center justify-center rounded text-slate-300 hover:bg-red-50 hover:text-red-500 disabled:opacity-50"
+                      className="text-slate-300 hover:bg-red-50 hover:text-red-500"
+                      aria-label="코멘트 삭제"
                     >
                       {loadingDeleteComment ? (
                         <Loader2Icon className="size-3 animate-spin" />
                       ) : (
                         <Trash2Icon className="size-3" />
                       )}
-                    </button>
+                    </Button>
                   </div>
                 )}
               </div>
@@ -252,22 +274,25 @@ export function ThreadPopover({
                     )}
                   />
                   <div className="flex items-center justify-end gap-1.5">
-                    <button
+                    <Button
                       type="button"
+                      variant="ghost"
+                      size="xs"
                       onClick={() => setEditingId(null)}
-                      className="rounded px-2 py-1 text-slate-500 text-xs hover:bg-slate-50"
+                      className="text-slate-500 hover:bg-slate-50"
                     >
                       취소
-                    </button>
-                    <button
+                    </Button>
+                    <Button
                       type="submit"
+                      variant="default"
+                      size="xs"
                       disabled={
                         !editForm.formState.isValid || loadingUpdateComment
                       }
-                      className="rounded bg-primary px-2 py-1 font-medium text-white text-xs disabled:opacity-40"
                     >
                       {loadingUpdateComment ? "저장 중…" : "저장"}
-                    </button>
+                    </Button>
                   </div>
                 </form>
               ) : (
@@ -308,13 +333,14 @@ export function ThreadPopover({
             </p>
           )}
         </div>
-        <button
+        <Button
           type="submit"
+          variant="default"
+          size="sm"
           disabled={!replyForm.formState.isValid || loadingAddComment}
-          className="rounded-lg bg-primary px-2.5 py-1.5 font-medium text-white text-xs disabled:opacity-40"
         >
           {loadingAddComment ? "등록 중…" : "등록"}
-        </button>
+        </Button>
       </form>
     </PointPopover>
   );
