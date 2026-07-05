@@ -228,7 +228,7 @@ function MarkdownRuntimeBridge({
 const THEME: EditorThemeClasses = {
   paragraph: "mb-1 last:mb-0",
   text: {
-    bold: "bold",
+    bold: "font-bold",
     italic: "italic",
     strikethrough: "line-through",
     code: "rounded bg-slate-100 px-1 py-0.5 font-mono",
