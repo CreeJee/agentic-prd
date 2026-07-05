@@ -338,6 +338,7 @@ export function ThreadPopover({
           variant="default"
           size="lg"
           disabled={!replyForm.formState.isValid || loadingAddComment}
+          className="h-auto self-stretch"
         >
           {loadingAddComment ? "등록 중…" : "등록"}
         </Button>
