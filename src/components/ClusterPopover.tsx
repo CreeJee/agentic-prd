@@ -1,4 +1,5 @@
 import { CheckIcon, XIcon } from "lucide-react";
+import { Button } from "@/components/ui/button";
 import type { Point } from "../anchor";
 import { cn } from "../cn";
 import { authorInitial, snippet, threadAuthor } from "../format";
@@ -23,13 +24,16 @@ export function ClusterPopover({
         <span className="font-medium text-slate-500 text-xs">
           겹친 코멘트 {threads.length}
         </span>
-        <button
+        <Button
           type="button"
+          variant="ghost"
+          size="icon-sm"
           onClick={onClose}
-          className="flex size-6 items-center justify-center rounded text-slate-400 hover:bg-slate-100"
+          aria-label="닫기"
+          className="text-slate-400 hover:bg-slate-100"
         >
           <XIcon className="size-4" />
-        </button>
+        </Button>
       </div>
       <div className="flex min-h-0 flex-1 flex-col gap-0.5 overflow-y-auto p-1.5">
         {threads.map((t) => (
