@@ -75,8 +75,17 @@ test("seed /products comments (issues 1-3)", async ({ page }) => {
   );
 });
 
+/**
+ * 결제 버튼은 빈 장바구니에서 disabled 라 시드 전에 상품을 담는다. CartProvider 가
+ * in-memory useState 라 goto(풀 리로드) 시 장바구니가 초기화되므로 /cart 이동은
+ * 헤더 SPA 링크로 한다. 코멘트 본문은 결함 수정 전 시나리오의 역사적 재현용으로 유지.
+ */
 test("seed /cart comment (issue 4)", async ({ page }) => {
-  await page.goto("/cart");
+  await page.goto("/products");
+  await page.getByTestId("product-open-p1").click();
+  await page.getByTestId("product-add-p1").click();
+  await page.getByRole("link", { name: "장바구니" }).click();
+  await expect(page.getByTestId("cart-pay-button")).toBeEnabled();
   await leaveComment(
     page,
     "cart-pay-button",
