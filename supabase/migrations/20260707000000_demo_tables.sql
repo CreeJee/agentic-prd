@@ -29,3 +29,9 @@ create policy "demo_comments_all" on public.demo_comments
   for all using (true) with check (true);
 create policy "demo_specs_all" on public.demo_specs
   for all using (true) with check (true);
+
+-- RLS 정책은 GRANT 를 대체하지 않는다. postgres 롤로 만든 테이블은 기본적으로
+-- anon/authenticated 에 select/insert/update/delete 권한이 없어 정책이 있어도
+-- "permission denied for table" 로 막힌다 — 위젯(anon publishable key)이 CRUD 하려면 명시 GRANT 필요.
+grant select, insert, update, delete on public.demo_comments to anon, authenticated;
+grant select, insert, update, delete on public.demo_specs to anon, authenticated;
