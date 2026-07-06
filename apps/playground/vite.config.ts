@@ -12,6 +12,8 @@ import { resolveSupabaseStorage } from "./src/supabaseEnv";
  * Vite dev 서버가 resolve 하도록 해준다.
  * storage 는 VITE_SUPABASE_URL / VITE_SUPABASE_PUBLIC_KEY env 로 오버라이드 가능
  * (Playwright 시드가 로컬 Supabase 를 가리킬 때 사용). 미설정 시 호스티드 폴백.
+ * 오버라이드는 실제 프로세스 env 로만 동작한다(.env 파일은 config 평가 시점에
+ * 로드되지 않아 dev-plugin 에 반영 안 됨 — 클라 import.meta.env 만 반영돼 갈라진다).
  */
 export default defineConfig({
   plugins: [
