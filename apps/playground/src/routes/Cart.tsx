@@ -48,9 +48,13 @@ export function Cart() {
                       type="number"
                       min={1}
                       value={item.qty}
-                      onChange={(e) =>
-                        setQty(item.product.id, Number(e.target.value))
-                      }
+                      onChange={(e) => {
+                        const next = Number(e.target.value);
+                        setQty(
+                          item.product.id,
+                          Number.isFinite(next) ? Math.max(1, next) : 1
+                        );
+                      }}
                       className="w-16 rounded-lg border border-slate-200 px-2 py-1"
                     />
                   </td>
