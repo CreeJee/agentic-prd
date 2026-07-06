@@ -10,9 +10,6 @@ import { useCart } from "../cart";
 
 const SHIPPING_METHODS = ["일반 배송 (무료)", "당일 배송 (+5,000원)"];
 
-/** 체크아웃 validation 정책의 이메일 형식(local@domain) 검사 정규식. */
-const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+$/;
-
 /** 체크아웃 화면. 배송 정보 폼 + 배송방법 선택 + 주문 접수. */
 export function Checkout() {
   const { items, clear } = useCart();
@@ -31,10 +28,7 @@ export function Checkout() {
     const next: Record<string, string> = {};
     if (!name.trim()) next["name"] = "이름을 입력하세요.";
     if (!email.trim()) next["email"] = "이메일을 입력하세요.";
-    else if (!EMAIL_PATTERN.test(email.trim()))
-      next["email"] = "올바른 이메일 형식이 아닙니다";
     if (!address.trim()) next["address"] = "주소를 입력하세요.";
-    if (!shipping) next["shipping"] = "배송 방법을 선택하세요";
     setErrors(next);
     if (Object.keys(next).length > 0) return;
     setDone(true);
@@ -130,11 +124,6 @@ export function Checkout() {
               ))}
             </SelectContent>
           </Select>
-          {errors["shipping"] && (
-            <p className="mt-1 font-normal text-red-500 text-xs">
-              {errors["shipping"]}
-            </p>
-          )}
         </div>
 
         <button
