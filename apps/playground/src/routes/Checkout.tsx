@@ -34,6 +34,7 @@ export function Checkout() {
     else if (!EMAIL_PATTERN.test(email.trim()))
       next["email"] = "올바른 이메일 형식이 아닙니다";
     if (!address.trim()) next["address"] = "주소를 입력하세요.";
+    if (!shipping) next["shipping"] = "배송 방법을 선택하세요";
     setErrors(next);
     if (Object.keys(next).length > 0) return;
     setDone(true);
@@ -129,6 +130,11 @@ export function Checkout() {
               ))}
             </SelectContent>
           </Select>
+          {errors["shipping"] && (
+            <p className="mt-1 font-normal text-red-500 text-xs">
+              {errors["shipping"]}
+            </p>
+          )}
         </div>
 
         <button
