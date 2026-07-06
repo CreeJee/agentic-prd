@@ -1,6 +1,7 @@
 import { CommentWidget } from "@agentic-prd/widget";
 import { Link, Navigate, Route, Routes, useLocation } from "react-router";
 import { KitchenSink } from "./routes/KitchenSink";
+import { Products } from "./routes/Products";
 import { resolveSupabaseStorage } from "./supabaseEnv";
 
 const WIDGET_CONFIG = {
@@ -45,6 +46,7 @@ export function App() {
 
       <Routes>
         <Route path="/" element={<Navigate to="/products" replace />} />
+        <Route path="/products" element={<Products />} />
         <Route path="/_kitchen-sink" element={<KitchenSink />} />
       </Routes>
 
