@@ -42,7 +42,13 @@
 - `supabase start`(마이그레이션 `20260707000000_demo_tables.sql`) + global-setup truncate → **항상 빈 상태에서 시작 보장**.
 - 3 spec 파일, 2회 연속 3 passed, 코멘트 6건 anchor 전부 캡처(중첩 Dialog scopeChain 포함).
 - 실행: `supabase start` 후 `pnpm --filter agentic-prd-playground test:e2e`.
-- **통합 갭(최종 리뷰 발견, `b29125a` 수정)**: 결함 4 수정으로 빈 장바구니의 결제 버튼이 disabled 가 되자 /cart 시드 테스트가 클릭 불가로 깨짐 → 시드 전에 상품을 담고 SPA 네비게이션으로 이동하도록 수정, 수정 후 데모 기준 3 passed 재확인. 교훈: 시드 도구는 데모 코드 변경과 함께 재실행돼야 한다.
+- **통합 갭(최종 리뷰 발견)**: 결함 4 수정으로 빈 장바구니의 결제 버튼이 disabled 가 되자 /cart 시드 테스트가 클릭 불가로 깨짐(`b29125a` 로 임시 수정). 교훈: 시드 도구는 데모 코드 변경과 함께 재실행돼야 한다. → 아래 "데모 원상복구" 에 따라 결함 상태가 기준이 되면서 시드 스펙도 원본으로 복원됨.
+
+## 데모 원상복구 (검증 후 조치)
+
+수정 6건은 **채점 산출물**이지 데모의 목표 상태가 아니다. 데모는 결함이 심긴 상태가 원본이어야 skill 테스트를 반복 재현할 수 있으므로, 검증 종료 후 수정 6건 + 시드 적응 커밋을 revert 했다 (`cc5500c`). 수정 커밋들(`3d641db`…`f9877ff`)은 검증 증거로 히스토리에 남는다. revert 후 결함 데모 기준으로 시드 e2e 3 passed 재확인.
+
+**루프 재현 절차**: ① `supabase start` ② `pnpm --filter agentic-prd-playground test:e2e` (빈 상태에서 코멘트 6건+PRD 3건 시드) ③ env 를 로컬로 설정해 `pnpm play` ④ skill(list-threads/thread/sync-specs)로 에이전틱 수정 루프 실행 ⑤ 결과 채점 후 데모 수정분은 커밋하지 않거나 revert.
 
 ## 발견된 개선 백로그
 
