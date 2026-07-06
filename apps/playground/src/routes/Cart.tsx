@@ -86,14 +86,20 @@ export function Cart() {
             {total.toLocaleString()}원
           </span>
         </p>
-        <button
-          type="button"
-          data-testid="cart-pay-button"
-          onClick={() => navigate("/checkout")}
-          className="rounded-lg bg-primary px-5 py-2.5 font-medium text-sm text-white hover:opacity-90"
-        >
-          결제하기
-        </button>
+        <div className="flex flex-col items-end gap-2">
+          <button
+            type="button"
+            data-testid="cart-pay-button"
+            disabled={items.length === 0}
+            onClick={() => navigate("/checkout")}
+            className="rounded-lg bg-primary px-5 py-2.5 font-medium text-sm text-white hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-40"
+          >
+            결제하기
+          </button>
+          {items.length === 0 ? (
+            <p className="text-red-500 text-xs">상품을 먼저 담아주세요</p>
+          ) : null}
+        </div>
       </div>
     </main>
   );
