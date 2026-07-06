@@ -25,7 +25,7 @@ function ProductCard({ product }: { product: Product }) {
         data-testid={`product-price-${product.id}`}
         className="mt-2 font-bold text-lg"
       >
-        {product.price}원
+        {product.price.toLocaleString()}원
       </p>
       <Dialog>
         <DialogTrigger
