@@ -29,6 +29,10 @@ Thumbs.db
 packages/*/dist/
 apps/*/dist/
 
+# Playwright output
+test-results/
+playwright-report/
+
 # Dev-plugin discovery file
 .agentic-prd.dev.json
 
