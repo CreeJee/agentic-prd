@@ -81,10 +81,16 @@ agentic-prd/
 ├─ tsconfig.base.json        # 공용 컴파일러 옵션
 ├─ biome.json                # 공용 lint/format
 ├─ apps/
-│  └─ playground/            # agentic-prd-playground (private)
-│     ├─ package.json        # deps: @agentic-prd/widget, @agentic-prd/dev-plugin
-│     ├─ vite.config.ts      # agenticPRDDev({...}) 로 사이드카 붙음
-│     └─ src/…
+│  └─ playground/            # agentic-prd-playground (private) — 커머스 데모 + 앵커 시험장
+│     ├─ package.json        # deps: @agentic-prd/widget, @agentic-prd/dev-plugin, react-router
+│     ├─ vite.config.ts      # agenticPRDDev({...}) 사이드카. storage 는 VITE_SUPABASE_* env 로 오버라이드(실 process env 만 — .env 파일은 config 평가 시점에 미로드)
+│     ├─ playwright.config.ts # 시드 전용 e2e — turbo test 미편입, `pnpm --filter agentic-prd-playground test:e2e` (로컬 supabase 필요)
+│     ├─ e2e/                # local-supabase.ts(로컬 키 상수) · global-setup.ts(truncate+PRD 시드) · seed-comments.spec.ts(실제 위젯 UI 로 코멘트 시드)
+│     └─ src/
+│        ├─ App.tsx          # 네비 레이아웃 + Routes + CommentWidget(pageKey=pathname 주입)
+│        ├─ supabaseEnv.ts   # env → storage 해석 (앱 import.meta.env / vite.config process.env 공유)
+│        ├─ data.ts cart.tsx # 데모 상품 데이터 · 장바구니 Context
+│        └─ routes/          # Products / Cart / Checkout / KitchenSink(/_kitchen-sink 앵커 회귀 시험)
 ├─ packages/
 │  ├─ widget/                # @agentic-prd/widget (npm public)
 │  │  ├─ package.json
@@ -135,11 +141,14 @@ agentic-prd/
 │     ├─ plugin.json
 │     ├─ skills/agentic-prd.md
 │     └─ commands/…
+├─ supabase/
+│  ├─ config.toml
+│  └─ migrations/            # 로컬 스택용 스키마 재현 (20260707000000_demo_tables.sql — 테이블+RLS+GRANT)
 └─ docs/
    └─ superpowers/specs/     # 설계/드리프트 기록
 ```
 
-DB(Supabase, `supabase/` 마이그레이션): `demo_comments`(id, path, x_pct, y_pct, anchor, resolved, comments, updated_at) · `demo_specs`(id, path, title, status, sections, updated_by, updated_at). 본문은 `sections.body`(마크다운).
+DB(Supabase): `demo_comments`(id, path, x_pct, y_pct, anchor, resolved, comments, updated_at) · `demo_specs`(id, path, title, status, sections, updated_by, updated_at). 본문은 `sections.body`(마크다운). 로컬 스택은 `supabase start`(docker) 로 기동하며 `supabase/migrations/` 가 자동 적용된다 — RLS 정책만으로는 부족하고 **테이블 GRANT(anon/authenticated/service_role)까지 있어야** 위젯/시드가 동작한다.
 
 ## 마크다운 / 표 / 체크리스트
 
@@ -154,7 +163,7 @@ DB(Supabase, `supabase/` 마이그레이션): `demo_comments`(id, path, x_pct, y
 - **dnd 위치 커밋:** raw `delta`(클램프 전) 대신 `active.rect.current.translated`(modifier 클램프됨) 사용 — 안 그러면 멀리 드래그 시 화면 밖으로.
 - **trigger 탐지:** `useCommentCapture` 가 클릭 지점의 가장 가까운 focusable 조상(`tabbable.isFocusable`), 없으면 raw target 을 `lastActivated` 로 기록. 유효성은 `triggerForOverlay` 가 isConnected·overlay 밖·UI 밖으로 게이팅.
 - **Tailwind v4:** `z-99990` 류 bare numeric 은 v4 dynamic value 로 생성됨. 위젯은 자체 CSS 를 싣지 않고 호스트 Tailwind 가 스캔 → 호스트 앱의 Tailwind entry 에 `@source` 위젯 src 필요. 플레이그라운드는 `apps/playground/src/style.css` 에서 `@source "../../../packages/widget/src"` 로 처리됨.
-- 백그라운드 탭은 rAF 정지 → 핀 "안 그려짐" 처럼 보임(포그라운드로 검증). dnd/IME 는 자동화로 트리거 안 됨 → 실키보드/마우스.
+- 백그라운드 탭은 rAF 정지 → 핀 "안 그려짐" 처럼 보임(포그라운드로 검증). dnd 는 자동화로 트리거 안 됨 → 실마우스. 텍스트(한글 포함)는 CDP/Playwright 의 insertText 경로로 입력 가능(IME 불필요 — 2026-07-07 검증 리포트에서 확인). 단 base-ui Select 등 일부 오버레이는 합성 클릭에 안 열릴 수 있음.
 
 ## 참고 문서
 
@@ -162,3 +171,5 @@ DB(Supabase, `supabase/` 마이그레이션): `demo_comments`(id, path, x_pct, y
 
 - `docs/superpowers/specs/2026-07-05-agents-md-drift-sync-design.md` — 이 문서와 CLAUDE.md 의 실체 반영 설계.
 - `docs/superpowers/specs/2026-07-05-dev-plugin-design.md` — 모노레포 레이아웃 + `@agentic-prd/dev-plugin` + Claude Code skill 설계(현행).
+- `docs/superpowers/specs/2026-07-07-playground-demo-agentic-verification-design.md` — 커머스 데모 + 에이전틱 루프 검증 설계.
+- `docs/superpowers/specs/2026-07-07-agentic-loop-verification-report.md` — 루프 검증 결과(6/6)와 resolver/위젯 개선 백로그.
