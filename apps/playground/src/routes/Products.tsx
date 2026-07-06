@@ -47,7 +47,10 @@ function ProductCard({ product }: { product: Product }) {
               type="number"
               min={1}
               value={qty}
-              onChange={(e) => setQty(Number(e.target.value))}
+              onChange={(e) => {
+                const next = Number(e.target.value);
+                setQty(Number.isFinite(next) ? Math.max(1, next) : 1);
+              }}
               data-testid="product-qty-input"
               className="mt-1 block w-full rounded-lg border border-slate-200 px-2.5 py-1.5 text-sm"
             />
