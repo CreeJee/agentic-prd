@@ -42,6 +42,7 @@
 - `supabase start`(마이그레이션 `20260707000000_demo_tables.sql`) + global-setup truncate → **항상 빈 상태에서 시작 보장**.
 - 3 spec 파일, 2회 연속 3 passed, 코멘트 6건 anchor 전부 캡처(중첩 Dialog scopeChain 포함).
 - 실행: `supabase start` 후 `pnpm --filter agentic-prd-playground test:e2e`.
+- **통합 갭(최종 리뷰 발견, `b29125a` 수정)**: 결함 4 수정으로 빈 장바구니의 결제 버튼이 disabled 가 되자 /cart 시드 테스트가 클릭 불가로 깨짐 → 시드 전에 상품을 담고 SPA 네비게이션으로 이동하도록 수정, 수정 후 데모 기준 3 passed 재확인. 교훈: 시드 도구는 데모 코드 변경과 함께 재실행돼야 한다.
 
 ## 발견된 개선 백로그
 
