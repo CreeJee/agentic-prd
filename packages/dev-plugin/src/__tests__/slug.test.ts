@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { slugify, resolveCollisions } from "../slug";
+import { resolveCollisions, slugify } from "../slug";
 
 describe("slugify", () => {
   it("kebab-cases ASCII input", () => {
@@ -24,7 +24,7 @@ describe("slugify", () => {
 describe("resolveCollisions", () => {
   it("returns <slug>.md for unique slug", () => {
     const result = resolveCollisions([
-      { id: "aaaaaaaa1111", title: "Checkout" }
+      { id: "aaaaaaaa1111", title: "Checkout" },
     ]);
     expect(result.get("aaaaaaaa1111")).toBe("checkout.md");
   });
@@ -59,7 +59,7 @@ describe("resolveCollisions", () => {
   it("does not collide when slugs differ", () => {
     const result = resolveCollisions([
       { id: "id1", title: "A" },
-      { id: "id2", title: "B" }
+      { id: "id2", title: "B" },
     ]);
     expect(result.get("id1")).toBe("a.md");
     expect(result.get("id2")).toBe("b.md");

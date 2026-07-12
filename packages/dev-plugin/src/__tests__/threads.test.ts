@@ -17,7 +17,7 @@ function makeFake(rows: ThreadRow[]): DevSupabase {
       return Array.from(store.values()).filter(
         (r) =>
           (!path || r.path === path) &&
-          (typeof resolved !== "boolean" || r.resolved === resolved),
+          (typeof resolved !== "boolean" || r.resolved === resolved)
       );
     },
     async getThread(id) {

@@ -1,9 +1,9 @@
-export { default } from "./plugin.js";
-export type { AgenticPRDDevOptions } from "./plugin.js";
-export type { CommentDTO, ThreadDTO } from "./handlers/threads.js";
 export type { SpecDTO, SyncedSpec } from "./handlers/specs.js";
+export type { CommentDTO, ThreadDTO } from "./handlers/threads.js";
+export type { AgenticPRDDevOptions } from "./plugin.js";
+export { default } from "./plugin.js";
 export type {
   LocationCandidate,
   LocationKind,
-  WidgetAnchor
+  WidgetAnchor,
 } from "./types.js";

@@ -31,11 +31,11 @@ export async function loadManifest(specSyncDir: string): Promise<Manifest> {
 /** manifest 를 <specSyncDir>/.sync.json 에 덮어쓴다. */
 export async function saveManifest(
   specSyncDir: string,
-  manifest: Manifest,
+  manifest: Manifest
 ): Promise<void> {
   await writeFile(
     join(specSyncDir, MANIFEST_NAME),
     `${JSON.stringify(manifest, null, 2)}\n`,
-    "utf8",
+    "utf8"
   );
 }

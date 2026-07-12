@@ -40,7 +40,7 @@ function fileHeader(spec: SpecDTO): string {
 
 export async function handleListSpecs(
   supabase: DevSupabase,
-  filter: { path?: string },
+  filter: { path?: string }
 ): Promise<SpecDTO[]> {
   const rows = await supabase.listSpecs(filter);
   return rows.map(toDTO);
@@ -48,7 +48,7 @@ export async function handleListSpecs(
 
 export async function handleGetSpec(
   supabase: DevSupabase,
-  id: string,
+  id: string
 ): Promise<SpecDTO | null> {
   const row = await supabase.getSpec(id);
   return row ? toDTO(row) : null;
@@ -57,7 +57,7 @@ export async function handleGetSpec(
 export async function handleSyncAll(
   supabase: DevSupabase,
   specSyncDir: string,
-  filter: { path?: string },
+  filter: { path?: string }
 ): Promise<{ synced: SyncedSpec[]; removed: string[] }> {
   const rows = await supabase.listSpecs(filter);
   const specs = rows.map(toDTO);
@@ -73,7 +73,7 @@ export async function handleSyncAll(
     ...manifest.byId,
   };
   const filenameById = resolveCollisions(
-    specs.map(({ id, title }) => ({ id, title })),
+    specs.map(({ id, title }) => ({ id, title }))
   );
 
   const synced: SyncedSpec[] = [];
@@ -118,7 +118,7 @@ export async function handleSyncAll(
 export async function handleSyncOne(
   supabase: DevSupabase,
   specSyncDir: string,
-  id: string,
+  id: string
 ): Promise<SyncedSpec | null> {
   const target = await supabase.getSpec(id);
   if (!target) return null;
@@ -129,7 +129,7 @@ export async function handleSyncOne(
    */
   const allSpecs = await supabase.listSpecs({});
   const filenameById = resolveCollisions(
-    allSpecs.map((r) => ({ id: r.id, title: r.title })),
+    allSpecs.map((r) => ({ id: r.id, title: r.title }))
   );
   const filename = filenameById.get(id);
   if (!filename) return null;

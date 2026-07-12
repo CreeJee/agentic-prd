@@ -25,14 +25,14 @@ describe("resolveAnchorLocation", () => {
         componentName: "App",
         fileName: "apps/playground/src/App.tsx",
         lineNumber: 42,
-        columnNumber: 3
-      }
+        columnNumber: 3,
+      },
     });
     expect(result[0]).toMatchObject({
       file: "apps/playground/src/App.tsx",
       line: 42,
       kind: "reactSource",
-      confidence: 1
+      confidence: 1,
     });
   });
 
@@ -40,20 +40,20 @@ describe("resolveAnchorLocation", () => {
     const root = makeProject({
       "apps/playground/src/App.tsx": [
         "export function App() {",
-        "  return <li data-testid=\"row-11\">항목 12</li>;",
-        "}"
-      ].join("\n")
+        '  return <li data-testid="row-11">항목 12</li>;',
+        "}",
+      ].join("\n"),
     });
     const result = await resolveAnchorLocation(root, {
-      selector: "[data-testid=\"row-11\"]",
+      selector: '[data-testid="row-11"]',
       relX: 0,
-      relY: 0
+      relY: 0,
     });
     expect(result[0]).toMatchObject({
       file: "apps/playground/src/App.tsx",
       line: 2,
       kind: "testid",
-      confidence: 0.8
+      confidence: 0.8,
     });
   });
 
@@ -62,20 +62,20 @@ describe("resolveAnchorLocation", () => {
       "packages/widget/src/CommentWidget.tsx": [
         "export function CommentWidget() {",
         "  return null;",
-        "}"
-      ].join("\n")
+        "}",
+      ].join("\n"),
     });
     const result = await resolveAnchorLocation(root, {
       selector: "div",
       relX: 0,
       relY: 0,
-      reactPath: ["CommentWidget", "App"]
+      reactPath: ["CommentWidget", "App"],
     });
     expect(result[0]).toMatchObject({
       file: "packages/widget/src/CommentWidget.tsx",
       line: 1,
       kind: "reactPath",
-      confidence: 0.5
+      confidence: 0.5,
     });
   });
 
@@ -84,7 +84,7 @@ describe("resolveAnchorLocation", () => {
     const result = await resolveAnchorLocation(root, {
       selector: "*",
       relX: 0,
-      relY: 0
+      relY: 0,
     });
     expect(result).toEqual([]);
   });

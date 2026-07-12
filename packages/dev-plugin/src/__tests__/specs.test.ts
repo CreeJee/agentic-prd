@@ -22,9 +22,7 @@ function makeFake(rows: SpecRow[]): DevSupabase {
       throw new Error("unused");
     },
     async listSpecs({ path }) {
-      return Array.from(store.values()).filter(
-        (r) => !path || r.path === path,
-      );
+      return Array.from(store.values()).filter((r) => !path || r.path === path);
     },
     async getSpec(id) {
       return store.get(id) ?? null;

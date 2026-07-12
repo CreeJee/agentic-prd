@@ -73,7 +73,7 @@ async function grepAll(
         results.push({
           file,
           line: i + 1,
-          evidence: evidenceFrom(match, lineText)
+          evidence: evidenceFrom(match, lineText),
         });
         if (results.length >= MAX_CANDIDATES) return results;
       }
@@ -109,7 +109,7 @@ export async function resolveAnchorLocation(
       line: anchor.reactSource.lineNumber ?? 1,
       evidence: `reactSource ${anchor.reactSource.componentName}`,
       kind: "reactSource",
-      confidence: 1
+      confidence: 1,
     });
     if (out.length >= MAX_CANDIDATES) return out;
   }
@@ -129,7 +129,7 @@ export async function resolveAnchorLocation(
         line: match.line,
         evidence: match.evidence,
         kind: "testid",
-        confidence: 0.8
+        confidence: 0.8,
       });
       if (out.length >= MAX_CANDIDATES) return out;
     }
@@ -144,7 +144,7 @@ export async function resolveAnchorLocation(
         line: match.line,
         evidence: match.evidence,
         kind: "id-attr",
-        confidence: 0.8
+        confidence: 0.8,
       });
       if (out.length >= MAX_CANDIDATES) return out;
     }
@@ -166,7 +166,7 @@ export async function resolveAnchorLocation(
           line: match.line,
           evidence: match.evidence,
           kind: "reactPath",
-          confidence: 0.5
+          confidence: 0.5,
         });
         if (out.length >= MAX_CANDIDATES) return out;
       }

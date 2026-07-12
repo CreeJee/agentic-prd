@@ -34,7 +34,7 @@ function toDTO(row: ThreadRow): ThreadDTO {
 
 export async function handleListThreads(
   supabase: DevSupabase,
-  filter: { path?: string; resolved?: boolean; limit?: number },
+  filter: { path?: string; resolved?: boolean; limit?: number }
 ): Promise<ThreadDTO[]> {
   const rows = await supabase.listThreads(filter);
   return rows.map(toDTO);
@@ -42,7 +42,7 @@ export async function handleListThreads(
 
 export async function handleGetThread(
   supabase: DevSupabase,
-  id: string,
+  id: string
 ): Promise<ThreadDTO | null> {
   const row = await supabase.getThread(id);
   return row ? toDTO(row) : null;
@@ -51,7 +51,7 @@ export async function handleGetThread(
 export async function handleSetResolved(
   supabase: DevSupabase,
   id: string,
-  resolved: boolean,
+  resolved: boolean
 ): Promise<ThreadDTO> {
   const row = await supabase.setThreadResolved(id, resolved);
   return toDTO(row);
@@ -60,13 +60,13 @@ export async function handleSetResolved(
 export async function handleThreadLocation(
   supabase: DevSupabase,
   projectRoot: string,
-  id: string,
+  id: string
 ): Promise<{ candidates: LocationCandidate[] }> {
   const row = await supabase.getThread(id);
   if (!row?.anchor) return { candidates: [] };
   const candidates = await resolveAnchorLocation(
     projectRoot,
-    row.anchor as WidgetAnchor,
+    row.anchor as WidgetAnchor
   );
   return { candidates };
 }

@@ -15,11 +15,7 @@ export interface WidgetAnchor {
   };
 }
 
-export type LocationKind =
-  | "reactSource"
-  | "testid"
-  | "id-attr"
-  | "reactPath";
+export type LocationKind = "reactSource" | "testid" | "id-attr" | "reactPath";
 
 export interface LocationCandidate {
   file: string;
