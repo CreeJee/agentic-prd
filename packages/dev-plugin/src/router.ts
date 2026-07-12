@@ -1,11 +1,17 @@
 export type RouteKind =
   | "listThreads"
   | "getThread"
+  | "createThread"
+  | "patchThread"
+  | "deleteThread"
+  | "appendComment"
   | "resolveThread"
   | "unresolveThread"
   | "threadLocation"
   | "listSpecs"
   | "getSpec"
+  | "putSpec"
+  | "deleteSpec"
   | "syncSpecs"
   | "syncOneSpec";
 
@@ -15,22 +21,98 @@ export interface Route {
 }
 
 interface Def {
-  method: "GET" | "POST";
+  method: "GET" | "POST" | "PATCH" | "PUT" | "DELETE";
   pattern: RegExp;
   kind: RouteKind;
   paramNames: string[];
 }
 
 const DEFS: Def[] = [
-  { method: "GET", pattern: /^\/threads\/?$/, kind: "listThreads", paramNames: [] },
-  { method: "GET", pattern: /^\/threads\/([^/]+)\/location\/?$/, kind: "threadLocation", paramNames: ["id"] },
-  { method: "POST", pattern: /^\/threads\/([^/]+)\/resolve\/?$/, kind: "resolveThread", paramNames: ["id"] },
-  { method: "POST", pattern: /^\/threads\/([^/]+)\/unresolve\/?$/, kind: "unresolveThread", paramNames: ["id"] },
-  { method: "GET", pattern: /^\/threads\/([^/]+)\/?$/, kind: "getThread", paramNames: ["id"] },
+  {
+    method: "GET",
+    pattern: /^\/threads\/?$/,
+    kind: "listThreads",
+    paramNames: [],
+  },
+  {
+    method: "POST",
+    pattern: /^\/threads\/?$/,
+    kind: "createThread",
+    paramNames: [],
+  },
+  {
+    method: "GET",
+    pattern: /^\/threads\/([^/]+)\/location\/?$/,
+    kind: "threadLocation",
+    paramNames: ["id"],
+  },
+  {
+    method: "POST",
+    pattern: /^\/threads\/([^/]+)\/comments\/?$/,
+    kind: "appendComment",
+    paramNames: ["id"],
+  },
+  {
+    method: "POST",
+    pattern: /^\/threads\/([^/]+)\/resolve\/?$/,
+    kind: "resolveThread",
+    paramNames: ["id"],
+  },
+  {
+    method: "POST",
+    pattern: /^\/threads\/([^/]+)\/unresolve\/?$/,
+    kind: "unresolveThread",
+    paramNames: ["id"],
+  },
+  {
+    method: "GET",
+    pattern: /^\/threads\/([^/]+)\/?$/,
+    kind: "getThread",
+    paramNames: ["id"],
+  },
+  {
+    method: "PATCH",
+    pattern: /^\/threads\/([^/]+)\/?$/,
+    kind: "patchThread",
+    paramNames: ["id"],
+  },
+  {
+    method: "DELETE",
+    pattern: /^\/threads\/([^/]+)\/?$/,
+    kind: "deleteThread",
+    paramNames: ["id"],
+  },
   { method: "GET", pattern: /^\/specs\/?$/, kind: "listSpecs", paramNames: [] },
-  { method: "POST", pattern: /^\/specs\/sync\/?$/, kind: "syncSpecs", paramNames: [] },
-  { method: "POST", pattern: /^\/specs\/([^/]+)\/sync\/?$/, kind: "syncOneSpec", paramNames: ["id"] },
-  { method: "GET", pattern: /^\/specs\/([^/]+)\/?$/, kind: "getSpec", paramNames: ["id"] }
+  {
+    method: "POST",
+    pattern: /^\/specs\/sync\/?$/,
+    kind: "syncSpecs",
+    paramNames: [],
+  },
+  {
+    method: "POST",
+    pattern: /^\/specs\/([^/]+)\/sync\/?$/,
+    kind: "syncOneSpec",
+    paramNames: ["id"],
+  },
+  {
+    method: "GET",
+    pattern: /^\/specs\/([^/]+)\/?$/,
+    kind: "getSpec",
+    paramNames: ["id"],
+  },
+  {
+    method: "PUT",
+    pattern: /^\/specs\/([^/]+)\/?$/,
+    kind: "putSpec",
+    paramNames: ["id"],
+  },
+  {
+    method: "DELETE",
+    pattern: /^\/specs\/([^/]+)\/?$/,
+    kind: "deleteSpec",
+    paramNames: ["id"],
+  },
 ];
 
 export function matchRoute(method: string, path: string): Route | null {

@@ -1,19 +1,19 @@
 import { existsSync, unlinkSync, writeFileSync } from "node:fs";
-import { dirname, isAbsolute, join, resolve } from "node:path";
 import type { IncomingMessage, ServerResponse } from "node:http";
+import { dirname, isAbsolute, join, resolve } from "node:path";
 import type { Plugin, ViteDevServer } from "vite";
-import {
-  handleGetThread,
-  handleListThreads,
-  handleSetResolved,
-  handleThreadLocation
-} from "./handlers/threads.js";
 import {
   handleGetSpec,
   handleListSpecs,
   handleSyncAll,
-  handleSyncOne
+  handleSyncOne,
 } from "./handlers/specs.js";
+import {
+  handleGetThread,
+  handleListThreads,
+  handleSetResolved,
+  handleThreadLocation,
+} from "./handlers/threads.js";
 import { matchRoute } from "./router.js";
 import { createDevSupabase, type StorageConfig } from "./supabase.js";
 
@@ -38,18 +38,10 @@ function findWorkspaceRoot(start: string): string {
 
 function isLocal(req: IncomingMessage): boolean {
   const addr = req.socket.remoteAddress ?? "";
-  return (
-    addr === "127.0.0.1" ||
-    addr === "::1" ||
-    addr === "::ffff:127.0.0.1"
-  );
+  return addr === "127.0.0.1" || addr === "::1" || addr === "::ffff:127.0.0.1";
 }
 
-function sendJSON(
-  res: ServerResponse,
-  status: number,
-  body: unknown
-): void {
+function sendJSON(res: ServerResponse, status: number, body: unknown): void {
   res.statusCode = status;
   res.setHeader("Content-Type", "application/json; charset=utf-8");
   res.end(JSON.stringify(body));
@@ -93,7 +85,7 @@ export default function agenticPRDDev(options: AgenticPRDDevOptions): Plugin {
         writeFileSync(
           discoveryPath,
           `${JSON.stringify({ port, prefix }, null, 2)}\n`,
-          "utf8",
+          "utf8"
         );
       };
       /**
@@ -105,7 +97,7 @@ export default function agenticPRDDev(options: AgenticPRDDevOptions): Plugin {
       if (httpServer?.listening) {
         const address = httpServer.address();
         writeDiscovery(
-          typeof address === "object" && address ? address.port : configuredPort,
+          typeof address === "object" && address ? address.port : configuredPort
         );
       } else if (httpServer) {
         httpServer.once("listening", () => {
@@ -113,7 +105,7 @@ export default function agenticPRDDev(options: AgenticPRDDevOptions): Plugin {
           writeDiscovery(
             typeof address === "object" && address
               ? address.port
-              : configuredPort,
+              : configuredPort
           );
         });
       } else {
@@ -129,7 +121,7 @@ export default function agenticPRDDev(options: AgenticPRDDevOptions): Plugin {
           if (!isLocal(req)) {
             sendJSON(res, 403, {
               error: "forbidden",
-              message: "localhost only"
+              message: "localhost only",
             });
             return;
           }
@@ -148,11 +140,10 @@ export default function agenticPRDDev(options: AgenticPRDDevOptions): Plugin {
               const resolved = query.get("resolved");
               const result = await handleListThreads(supabase, {
                 path: query.get("path") ?? undefined,
-                resolved:
-                  resolved === null ? undefined : resolved === "true",
+                resolved: resolved === null ? undefined : resolved === "true",
                 limit: query.get("limit")
                   ? Number.parseInt(query.get("limit") ?? "0", 10)
-                  : undefined
+                  : undefined,
               });
               sendJSON(res, 200, result);
               return;
@@ -164,7 +155,7 @@ export default function agenticPRDDev(options: AgenticPRDDevOptions): Plugin {
                 sendJSON(res, 404, {
                   error: "not-found",
                   resource: "thread",
-                  id
+                  id,
                 });
                 return;
               }
@@ -185,13 +176,17 @@ export default function agenticPRDDev(options: AgenticPRDDevOptions): Plugin {
             case "unresolveThread": {
               const id = route.params["id"] ?? "";
               const resolvedFlag = route.kind === "resolveThread";
-              const result = await handleSetResolved(supabase, id, resolvedFlag);
+              const result = await handleSetResolved(
+                supabase,
+                id,
+                resolvedFlag
+              );
               sendJSON(res, 200, result);
               return;
             }
             case "listSpecs": {
               const result = await handleListSpecs(supabase, {
-                path: query.get("path") ?? undefined
+                path: query.get("path") ?? undefined,
               });
               sendJSON(res, 200, result);
               return;
@@ -203,7 +198,7 @@ export default function agenticPRDDev(options: AgenticPRDDevOptions): Plugin {
                 sendJSON(res, 404, {
                   error: "not-found",
                   resource: "spec",
-                  id
+                  id,
                 });
                 return;
               }
@@ -224,11 +219,16 @@ export default function agenticPRDDev(options: AgenticPRDDevOptions): Plugin {
                 sendJSON(res, 404, {
                   error: "not-found",
                   resource: "spec",
-                  id
+                  id,
                 });
                 return;
               }
               sendJSON(res, 200, result);
+              return;
+            }
+            /** 라우터에는 있으나 아직 배선 전인 kind — 응답 없이 행이 걸리지 않게 폴스루 */
+            default: {
+              next();
               return;
             }
           }
@@ -242,6 +242,6 @@ export default function agenticPRDDev(options: AgenticPRDDevOptions): Plugin {
           });
         }
       });
-    }
+    },
   };
 }
