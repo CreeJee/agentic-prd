@@ -61,11 +61,11 @@ curl -sf "http://localhost:{port}/__agentic-prd/threads"
 
 ## 백로그
 
-- **앵커 캡처 시 애니메이션 정착 대기** — 호스트 오버레이의 진입 애니메이션 도중
-  캡처하면 `relX`/`relY` 가 변형 중 rect 기준으로 틀어짐. 제안:
-  `Promise.allSettled(root.getAnimations({subtree:true}).map((a) => a.finished))`
-  + `iterations === Infinity` 필터 + 타임아웃 race(300–500ms). 캡처 경로 일회성
-  await 라 resolvePoint(rAF) 금지 규칙과 무관. (2026-07-13 사용자 제안, 착수 예정)
+- ~~앵커 캡처 시 애니메이션 정착 대기~~ — **검토 후 기각(2026-07-13).**
+  `buildCapture` 는 클릭 좌표·rect 를 같은 틱에 읽어 분수를 만들므로
+  scale/translate 애니메이션에 불변(이미 정확). `getAnimations().finished` 대기
+  후 재읽기는 클릭 좌표 staleness 로 slide-in 케이스를 회귀시킴. 상세는
+  AGENTS.md 함정 섹션 참조.
 - cloudStorage 어댑터(도메인 분리·조직 요금제) — `StorageAdapter` 인터페이스가
   계약. dev-plugin HTTP API 가 클라우드 API 초안.
 - Tailwind 비의존 스타일(자체 CSS 번들 옵션) — 현재 비 Tailwind v4 호스트는

@@ -164,6 +164,7 @@ agentic-prd/
 - **dnd 위치 커밋:** raw `delta`(클램프 전) 대신 `active.rect.current.translated`(modifier 클램프됨) 사용 — 안 그러면 멀리 드래그 시 화면 밖으로.
 - **trigger 탐지:** `useCommentCapture` 가 클릭 지점의 가장 가까운 focusable 조상(`tabbable.isFocusable`), 없으면 raw target 을 `lastActivated` 로 기록. 유효성은 `triggerForOverlay` 가 isConnected·overlay 밖·UI 밖으로 게이팅.
 - **Tailwind v4:** `z-99990` 류 bare numeric 은 v4 dynamic value 로 생성됨. 위젯은 자체 CSS 를 싣지 않고 호스트 Tailwind 가 스캔 → 호스트 앱의 Tailwind entry 에 `@source` 위젯 src 필요. 플레이그라운드는 `apps/playground/src/style.css` 에서 `@source "../../../packages/widget/src"` 로 처리됨.
+- **캡처는 애니메이션 대기 불필요:** `buildCapture` 는 클릭 좌표와 rect 를 같은 틱에 읽어 분수(relX/relY)를 만들므로 scale/translate 진입 애니메이션에 **불변**이다(변형 rect 기준 분수 = 최종 rect 기준 분수). `getAnimations().finished` 로 settle 을 기다린 뒤 rect 를 재읽으면 클릭 좌표가 stale 해져 slide-in 케이스가 오히려 틀어진다 — 검토 후 기각(2026-07-13). 비불변 케이스는 회전·높이 전개(아코디언)뿐이며 이는 대기로도 해결 안 됨.
 - 백그라운드 탭은 rAF 정지 → 핀 "안 그려짐" 처럼 보임(포그라운드로 검증). dnd 는 자동화로 트리거 안 됨 → 실마우스. 텍스트(한글 포함)는 CDP/Playwright 의 insertText 경로로 입력 가능(IME 불필요 — 2026-07-07 검증 리포트에서 확인). 단 base-ui Select 등 일부 오버레이는 합성 클릭에 안 열릴 수 있음.
 
 ## 참고 문서
