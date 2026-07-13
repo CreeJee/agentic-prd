@@ -1,4 +1,3 @@
-
 import { useLexicalComposerContext } from "@lexical/react/LexicalComposerContext";
 import { useLexicalEditable } from "@lexical/react/useLexicalEditable";
 import {
@@ -19,18 +18,6 @@ import {
   type TableCellNode,
 } from "@lexical/table";
 import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuPortal,
-  DropdownMenuSeparator,
-  DropdownMenuSub,
-  DropdownMenuSubContent,
-  DropdownMenuSubTrigger,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import {
   $getNodeByKey,
   $getSelection,
   $isRangeSelection,
@@ -45,6 +32,18 @@ import {
   useState,
 } from "react";
 import { createPortal } from "react-dom";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuPortal,
+  DropdownMenuSeparator,
+  DropdownMenuSub,
+  DropdownMenuSubContent,
+  DropdownMenuSubTrigger,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 const PRESET_COLORS: { label: string; value: string | null }[] = [
   { label: "지우기", value: null },
@@ -277,8 +276,8 @@ export function TableActionMenuPlugin({
   const isEditable = useLexicalEditable();
   return isEditable
     ? createPortal(
-      <TableActionMenuContainer anchorElem={anchorElem} />,
-      anchorElem
-    )
+        <TableActionMenuContainer anchorElem={anchorElem} />,
+        anchorElem
+      )
     : null;
 }

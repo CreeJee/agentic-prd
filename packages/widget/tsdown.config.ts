@@ -8,7 +8,7 @@ const neverBundle = Object.keys(packageJSON.peerDependencies);
 
 export default defineConfig({
   dts: {
-    tsgo: true
+    tsgo: true,
   },
   exports: true,
   clean: false,
