@@ -1,7 +1,7 @@
 /**
  * 실제 위젯 UI 경로(코멘트 모드 → 대상 클릭 → 에디터 입력 → 제출)로 planted
  * issue 6건에 코멘트를 시드한다. 앵커 캡처(fiber/selector/scope chain)가 진짜
- * 사용자 경로로 만들어지는 것이 목적이므로 Supabase 직접 insert 를 쓰지 않는다.
+ * 사용자 경로로 만들어지는 것이 목적이므로 저장소 직접 insert 를 쓰지 않는다.
  */
 import { expect, type Page, test } from "@playwright/test";
 

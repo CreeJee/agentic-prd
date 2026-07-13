@@ -3,17 +3,12 @@ import tailwindcss from "@tailwindcss/vite";
 import react from "@vitejs/plugin-react";
 import { defineConfig } from "vite";
 import tsconfigPaths from "vite-tsconfig-paths";
-import { resolveSupabaseStorage } from "./src/supabaseEnv";
 
 /**
  * 위젯 개발용 플레이그라운드. @agentic-prd/dev-plugin 이 dev 서버에 사이드카로
- * 붙어 코멘트/스펙 조회 endpoint 를 열어준다.
+ * 붙어 코멘트/스펙 저장소(.agentic-prd/ JSON)와 조회/쓰기 endpoint 를 연다.
  * vite-tsconfig-paths 는 위젯 패키지 내부의 @/* alias(=packages/widget/src/*) 를
  * Vite dev 서버가 resolve 하도록 해준다.
- * storage 는 VITE_SUPABASE_URL / VITE_SUPABASE_PUBLIC_KEY env 로 오버라이드 가능
- * (Playwright 시드가 로컬 Supabase 를 가리킬 때 사용). 미설정 시 호스티드 폴백.
- * 오버라이드는 실제 프로세스 env 로만 동작한다(.env 파일은 config 평가 시점에
- * 로드되지 않아 dev-plugin 에 반영 안 됨 — 클라 import.meta.env 만 반영돼 갈라진다).
  */
 export default defineConfig({
   plugins: [
@@ -23,7 +18,6 @@ export default defineConfig({
       projects: ["../../packages/widget/tsconfig.json", "./tsconfig.json"],
     }),
     agenticPRDDev({
-      storage: resolveSupabaseStorage(process.env),
       specSyncDir: "docs/specs",
     }),
   ],

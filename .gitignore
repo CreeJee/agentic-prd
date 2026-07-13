@@ -18,9 +18,8 @@ Thumbs.db
 .vscode/
 *.log
 
-# Supabase
-**/supabase/.branches
-**/supabase/.temp
+# agentic-prd 로컬 저장소 (데모/e2e 데이터 — 공유하려면 이 줄을 지우고 커밋)
+.agentic-prd/
 
 # Turborepo
 .turbo/

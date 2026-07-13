@@ -1,13 +1,17 @@
 /**
- * Playwright 전역 셋업: 로컬 Supabase 를 빈 상태로 초기화하고 PRD 3건을 시드한다.
- * 코멘트는 UI 경로 검증이 목적이라 spec 파일에서 위젯으로 남기지만, PRD 는 앵커가
- * 없어 직접 insert 로 충분하다 (설계 문서 §3).
+ * Playwright 전역 셋업: dev-plugin 로컬 저장소(.agentic-prd/)를 빈 상태로 초기화하고
+ * PRD 3건을 시드한다. 코멘트는 UI 경로 검증이 목적이라 spec 파일에서 위젯으로 남기고,
+ * PRD 는 앵커가 없어 파일 직접 쓰기로 충분하다. 저장소 루트는 dev-plugin 의 루트 규칙
+ * (pnpm-workspace.yaml 이 있는 workspace 루트)과 동일해야 한다.
  */
-import { createClient } from "@supabase/supabase-js";
-import {
-  LOCAL_SUPABASE_SERVICE_KEY,
-  LOCAL_SUPABASE_URL,
-} from "./local-supabase";
+import { mkdirSync, writeFileSync } from "node:fs";
+import { dirname, join } from "node:path";
+import { fileURLToPath } from "node:url";
+
+const DATA_DIR = join(
+  dirname(fileURLToPath(import.meta.url)),
+  "../../../.agentic-prd"
+);
 
 const PRODUCTS_PRD = `## 상품 노출 정책
 
@@ -25,40 +29,44 @@ const CHECKOUT_PRD = `## 체크아웃 validation 정책
 - 이메일은 형식(\`local@domain\`)을 검증하고, 불일치 시 "올바른 이메일 형식이 아닙니다"를 보여준다.
 - 배송 방법은 필수 선택이다. 미선택 제출 시 "배송 방법을 선택하세요" 에러를 보여준다.`;
 
-async function globalSetup() {
-  const sb = createClient(LOCAL_SUPABASE_URL, LOCAL_SUPABASE_SERVICE_KEY);
-  const wipeComments = await sb.from("demo_comments").delete().neq("id", "");
-  if (wipeComments.error) throw new Error(wipeComments.error.message);
-  const wipeSpecs = await sb.from("demo_specs").delete().neq("id", "");
-  if (wipeSpecs.error) throw new Error(wipeSpecs.error.message);
+function specRow(id: string, path: string, title: string, body: string) {
+  return {
+    id,
+    path,
+    title,
+    status: "CONFIRMED",
+    sections: { body },
+    updated_by: "검증봇",
+    updated_at: new Date().toISOString(),
+  };
+}
 
-  const seeded = await sb.from("demo_specs").insert([
-    {
-      id: "spec_seed_products",
-      path: "/products",
-      title: "상품 목록 정책",
-      status: "APPROVED",
-      sections: { body: PRODUCTS_PRD },
-      updated_by: "검증봇",
-    },
-    {
-      id: "spec_seed_cart",
-      path: "/cart",
-      title: "장바구니 정책",
-      status: "APPROVED",
-      sections: { body: CART_PRD },
-      updated_by: "검증봇",
-    },
-    {
-      id: "spec_seed_checkout",
-      path: "/checkout",
-      title: "체크아웃 정책",
-      status: "APPROVED",
-      sections: { body: CHECKOUT_PRD },
-      updated_by: "검증봇",
-    },
-  ]);
-  if (seeded.error) throw new Error(seeded.error.message);
+async function globalSetup() {
+  mkdirSync(DATA_DIR, { recursive: true });
+  writeFileSync(join(DATA_DIR, "comments.json"), "[]\n", "utf8");
+  writeFileSync(
+    join(DATA_DIR, "specs.json"),
+    `${JSON.stringify(
+      [
+        specRow(
+          "spec_seed_products",
+          "/products",
+          "상품 목록 정책",
+          PRODUCTS_PRD
+        ),
+        specRow("spec_seed_cart", "/cart", "장바구니 정책", CART_PRD),
+        specRow(
+          "spec_seed_checkout",
+          "/checkout",
+          "체크아웃 정책",
+          CHECKOUT_PRD
+        ),
+      ],
+      null,
+      2
+    )}\n`,
+    "utf8"
+  );
 }
 
 export default globalSetup;

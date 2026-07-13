@@ -4,11 +4,6 @@ import { Cart } from "./routes/Cart";
 import { Checkout } from "./routes/Checkout";
 import { KitchenSink } from "./routes/KitchenSink";
 import { Products } from "./routes/Products";
-import { resolveSupabaseStorage } from "./supabaseEnv";
-
-const WIDGET_CONFIG = {
-  storage: resolveSupabaseStorage(import.meta.env),
-};
 
 const PAGE_LABELS: Record<string, string> = {
   "/products": "상품 목록",
@@ -55,7 +50,6 @@ export function App() {
       </Routes>
 
       <CommentWidget
-        config={WIDGET_CONFIG}
         pageKey={pathname}
         pageLabel={PAGE_LABELS[pathname] ?? pathname}
       />
