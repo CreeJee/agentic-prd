@@ -2,8 +2,8 @@
 
 pnpm + turborepo 모노레포. 두 개의 배포 패키지와 하나의 데모 앱, 하나의 Claude Code skill 로 구성된다.
 
-- `@agentic-prd/widget` (`packages/widget`) — Drop-in **코멘트 핀 + 기획문서** 오버레이 위젯. 스레드 코멘트를 임의 DOM 엘리먼트에 앵커(모달·중첩 오버레이 내부 포함)하고, 화면(path)별 기획문서를 단다. 저장소는 **Supabase 단일 원천**. 호스트 앱(어떤 React 앱이든)이 라우팅/인증을 제공하고 위젯을 임베드한다.
-- `@agentic-prd/dev-plugin` (`packages/dev-plugin`) — dev 전용 사이드카 Vite 플러그인. Vite dev 서버 안 미들웨어로 Supabase 데이터를 로컬 HTTP 로 노출해 Claude Code skill 이 소비. 별도 프로세스 없음.
+- `@agentic-prd/widget` (`packages/widget`) — Drop-in **코멘트 핀 + 기획문서** 오버레이 위젯. 스레드 코멘트를 임의 DOM 엘리먼트에 앵커(모달·중첩 오버레이 내부 포함)하고, 화면(path)별 기획문서를 단다. 저장소는 **`StorageAdapter` 로 주입(기본: dev-plugin 로컬 JSON)**. 호스트 앱(어떤 React 앱이든)이 라우팅/인증을 제공하고 위젯을 임베드한다.
+- `@agentic-prd/dev-plugin` (`packages/dev-plugin`) — dev 전용 사이드카 Vite 플러그인. Vite dev 서버 안 미들웨어로 `.agentic-prd/` 로컬 JSON 저장소를 소유하고 읽기+쓰기 HTTP API 로 노출해 Claude Code skill 이 소비. 별도 프로세스 없음.
 - `agentic-prd-playground` (`apps/playground`, private) — 위젯 + dev-plugin 을 붙여 돌리는 개발용 데모 앱.
 - `plugins/agentic-prd-skill/` — 위 dev-plugin 을 자연어로 두드리는 Claude Code skill (npm 패키지 아님).
 
@@ -11,9 +11,10 @@ pnpm + turborepo 모노레포. 두 개의 배포 패키지와 하나의 데모 �
 
 ```tsx
 <CommentWidget
-  config={{ storage: { url, publicKey }, currentUser?, zIndexBase?, routeSource? }}
-  pageKey={pathname}        // 호스트가 라우트별로 주입
+  pageKey={pathname}        // 호스트가 라우트별로 주입 (없으면 browserRouteSource 폴백)
   pageLabel={screenLabel}
+  // config 는 전부 optional — storage 미지정 시 devServerStorage(dev-plugin) 기본
+  config={{ storage?, currentUser?, zIndexBase?, routeSource? }}
 />
 ```
 
@@ -41,9 +42,11 @@ biome 은 워크스페이스 루트 `biome.json` 을 공유하며 각 패키지�
 
 검증 기준: **typecheck 0 + biome(error) 클린**. 번들 확인은 build, 런타임은 play(실키보드/마우스). typecheck 는 `tsgo`(typescript-native-preview) 기반이라 표준 `tsc` 보다 훨씬 빠르지만 동일 옵션(`tsconfig.base.json` 확장) 을 사용한다.
 
+skill 설치(no-clone): `/plugin marketplace add CreeJee/agentic-prd` → `/plugin install agentic-prd@agentic-prd`. 로컬 검증은 `claude plugin validate .`.
+
 ## Do
 
-- **JSDoc 만 작성, `//` 인라인 주석 금지**. `database.types.ts`(자동생성) 는 예외.
+- **JSDoc 만 작성, `//` 인라인 주석 금지**.
 - `@tsconfig/strictest` (noUncheckedIndexedAccess ON) — 배열/객체 인덱스 접근은 가드.
 - **모든 `@lexical/*` + `lexical` 을 단일 버전(현재 0.46.0)으로 유지** — 버전 스큐는 표 함수가 다른 selection store 를 읽어 조용히 깨진다(예: 삽입이 항상 첫 셀).
 - UI 프리미티브는 **`@base-ui/react` 기반 로컬 shadcn**(`packages/widget/src/components/ui/*`, `components.json` 의 `base-sera` 스타일) 재사용. 신규 프리미티브가 필요하면 `pnpm dlx shadcn add ...` 로 로컬에 추가. 아이콘은 `lucide-react`.
@@ -62,9 +65,9 @@ biome 은 워크스페이스 루트 `biome.json` 을 공유하며 각 패키지�
 
 아래는 모두 `packages/widget` 내부 얘기. (경로가 `src/…` 로 표기되면 `packages/widget/src/…` 로 읽는다.)
 
-- **server state = react-query / client state = jotai.** 스레드·기획문서는 Supabase 원천 → `useQuery` 폴링(코멘트 4s, 스펙 5s, `refetchIntervalInBackground: true`) + 낙관적 `useMutation`("via the cache": onMutate 스냅샷/setQueryData → onError 롤백 → onSettled invalidate). 작성자 이름은 개인값 → jotai `atomWithStorage`.
-- **DI = WidgetProvider.** 렌더 시점 useMemo 로 QueryClient·SupabaseClient 생성, Context 주입. 훅은 `useSupabaseClient()`.
-- **supabase-only.** `@supabase/supabase-js` 단일 클라가 comments + specs 담당. local/persist 모드 없음.
+- **server state = react-query / client state = jotai.** 스레드·기획문서는 StorageAdapter 원천(기본 devServerStorage → dev-plugin 로컬 JSON) → `useQuery` 폴링(코멘트 4s, 스펙 5s, `refetchIntervalInBackground: true`) + 낙관적 `useMutation`("via the cache": onMutate 스냅샷/setQueryData → onError 롤백 → onSettled invalidate). 작성자 이름은 개인값 → jotai `atomWithStorage`.
+- **DI = WidgetProvider.** 렌더 시점 useMemo 로 QueryClient·StorageAdapter 해석(기본 devServerStorage), Context 주입. 훅은 `useStorageAdapter()`.
+- **storage adapter.** `config.storage`(StorageAdapter) 미지정 시 `devServerStorage()` — 같은 origin 의 dev-plugin 이 comments+specs 담당. Supabase 등 외부 백엔드 직결은 폐기했고, 원격 협업 백엔드는 어댑터로 추가한다.
 - **path 별 쿼리키** `["comment-widget", "threads"|"specs", path]` — payload·폴링·invalidate 를 활성 화면으로 한정.
 - **pageKey/pageLabel 해석:** prop > `config.routeSource` > `browserRouteSource()`. props 가 1순위라 어떤 라우터(browser/hash/memory) 든 호스트 리렌더로 커버. 라우터 없는 임베드는 `browserRouteSource`(history+popstate) 폴백.
 - **에디터 = lexical(0.46).** `MarkdownEditor` 가 작성/답글/편집/읽기 겸용, **제어형 `value`**(마크다운 in/out, 에코 가드). 폼은 **react-hook-form + valibot + Controller**. 코멘트/스레드는 툴바 없음(마크다운 단축만), 기획문서(`SpecPanel` 내부 편집 트리) 만 `toolbar="full"`.
@@ -83,12 +86,11 @@ agentic-prd/
 ├─ apps/
 │  └─ playground/            # agentic-prd-playground (private) — 커머스 데모 + 앵커 시험장
 │     ├─ package.json        # deps: @agentic-prd/widget, @agentic-prd/dev-plugin, react-router
-│     ├─ vite.config.ts      # agenticPRDDev({...}) 사이드카. storage 는 VITE_SUPABASE_* env 로 오버라이드(실 process env 만 — .env 파일은 config 평가 시점에 미로드)
-│     ├─ playwright.config.ts # 시드 전용 e2e — turbo test 미편입, `pnpm --filter agentic-prd-playground test:e2e` (로컬 supabase 필요)
-│     ├─ e2e/                # local-supabase.ts(로컬 키 상수) · global-setup.ts(truncate+PRD 시드) · seed-comments.spec.ts(실제 위젯 UI 로 코멘트 시드)
+│     ├─ vite.config.ts      # agenticPRDDev({ specSyncDir }) 사이드카
+│     ├─ playwright.config.ts # 시드 전용 e2e — turbo test 미편입, `pnpm --filter agentic-prd-playground test:e2e`
+│     ├─ e2e/                # global-setup.ts(.agentic-prd 초기화+PRD 시드) · seed-comments.spec.ts(실제 위젯 UI 로 코멘트 시드)
 │     └─ src/
-│        ├─ App.tsx          # 네비 레이아웃 + Routes + CommentWidget(pageKey=pathname 주입)
-│        ├─ supabaseEnv.ts   # env → storage 해석 (앱 import.meta.env / vite.config process.env 공유)
+│        ├─ App.tsx          # 네비 레이아웃 + Routes + CommentWidget(pageKey=pathname 주입, config 없음)
 │        ├─ data.ts cart.tsx # 데모 상품 데이터 · 장바구니 Context
 │        └─ routes/          # Products / Cart / Checkout / KitchenSink(/_kitchen-sink 앵커 회귀 시험)
 ├─ packages/
@@ -98,13 +100,12 @@ agentic-prd/
 │  │  ├─ tsdown.config.ts
 │  │  └─ src/                # ← 아래 위젯 트리
 │  │     ├─ CommentWidget.tsx    # 오케스트레이터(캔버스 상태/캡처/클러스터링) + Surface + ToolbarController
-│  │     ├─ WidgetProvider.tsx   # QueryClient+SupabaseClient 주입
+│  │     ├─ WidgetProvider.tsx   # QueryClient+StorageAdapter 주입
 │  │     ├─ config.ts            # CommentWidgetConfig
 │  │     ├─ cn.ts / format.ts    # 위젯 로컬 헬퍼(cn = tailwind-merge/clsx)
 │  │     ├─ lib/utils.ts         # shadcn 규약의 cn 헬퍼(로컬 shadcn 프리미티브가 사용)
-│  │     ├─ database.types.ts    # supabase gen types (자동생성)
 │  │     ├─ store.ts             # 코멘트 react-query 훅 + jotai userName
-│  │     ├─ supabase.ts          # @supabase/supabase-js 단일 클라(comments+specs)
+│  │     ├─ storage.ts           # StorageAdapter + devServerStorage(기본 어댑터)
 │  │     ├─ routeSource.ts       # RouteSource 어댑터 + browserRouteSource + useRouteKey
 │  │     ├─ panelRuntime.tsx     # overlay-kit context + WidgetPanelRuntimeProvider(path/thread/author 공급)
 │  │     ├─ panelOverlays.tsx    # CommentPanel/SpecPanel overlay controllers
@@ -131,24 +132,24 @@ agentic-prd/
 │        ├─ plugin.ts        # Vite Plugin object (configureServer)
 │        ├─ router.ts        # method/path → handler
 │        ├─ handlers/        # threads.ts / specs.ts
-│        ├─ supabase.ts      # server-side @supabase/supabase-js
+│        ├─ storage.ts       # .agentic-prd/ JSON 파일 저장소
 │        ├─ anchor-resolver.ts
 │        ├─ slug.ts
 │        ├─ manifest.ts
 │        └─ types.ts
+├─ .claude-plugin/           # 플러그인 마켓플레이스 manifest (marketplace.json)
 ├─ plugins/
-│  └─ agentic-prd-skill/     # Claude Code skill (npm 아님, 심링크/복사로 배포)
-│     ├─ plugin.json
-│     ├─ skills/agentic-prd.md
-│     └─ commands/…
-├─ supabase/
-│  ├─ config.toml
-│  └─ migrations/            # 로컬 스택용 스키마 재현 (20260707000000_demo_tables.sql — 테이블+RLS+GRANT)
+│  └─ agentic-prd-skill/     # Claude Code plugin (npm 아님, 마켓플레이스로 배포)
+│     ├─ .claude-plugin/plugin.json
+│     ├─ skills/agentic-prd/SKILL.md
+│     ├─ skills/setup/SKILL.md
+│     └─ commands/…          # work / list-threads / thread / resolve / unresolve / sync-specs
+├─ README.md                 # 사용자용 quickstart
 └─ docs/
    └─ superpowers/specs/     # 설계/드리프트 기록
 ```
 
-DB(Supabase): `demo_comments`(id, path, x_pct, y_pct, anchor, resolved, comments, updated_at) · `demo_specs`(id, path, title, status, sections, updated_by, updated_at). 본문은 `sections.body`(마크다운). 로컬 스택은 `supabase start`(docker) 로 기동하며 `supabase/migrations/` 가 자동 적용된다 — RLS 정책만으로는 부족하고 **테이블 GRANT(anon/authenticated/service_role)까지 있어야** 위젯/시드가 동작한다.
+데이터: 루트 `.agentic-prd/comments.json`(id, path, x_pct, y_pct, anchor, resolved, comments, updated_at) · `.agentic-prd/specs.json`(id, path, title, status, sections, updated_by, updated_at). 본문은 `sections.body`(마크다운). dev-plugin 이 소유(원자적 쓰기, 손상 시 .bak 백업)하며 위젯/skill 은 HTTP API 로만 접근한다. 루트는 pnpm-workspace.yaml 이 있으면 workspace 루트, 없으면 Vite config.root.
 
 ## 마크다운 / 표 / 체크리스트
 
