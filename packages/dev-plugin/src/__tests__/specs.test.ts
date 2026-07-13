@@ -3,13 +3,15 @@ import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { describe, expect, it } from "vitest";
 import {
+  handleDeleteSpec,
   handleGetSpec,
   handleListSpecs,
+  handlePutSpec,
   handleSyncAll,
 } from "../handlers/specs";
-import type { DevSupabase, SpecRow } from "../supabase";
+import type { DevStorage, SpecRow } from "../storage";
 
-function makeFake(rows: SpecRow[]): DevSupabase {
+function makeFake(rows: SpecRow[]): DevStorage {
   const store = new Map(rows.map((r) => [r.id, r]));
   return {
     async listThreads() {
@@ -17,6 +19,18 @@ function makeFake(rows: SpecRow[]): DevSupabase {
     },
     async getThread() {
       return null;
+    },
+    async insertThread(row) {
+      return row;
+    },
+    async patchThread() {
+      return null;
+    },
+    async appendComment() {
+      return null;
+    },
+    async deleteThread() {
+      return false;
     },
     async setThreadResolved() {
       throw new Error("unused");
@@ -26,6 +40,13 @@ function makeFake(rows: SpecRow[]): DevSupabase {
     },
     async getSpec(id) {
       return store.get(id) ?? null;
+    },
+    async upsertSpec(row) {
+      store.set(row.id, row);
+      return row;
+    },
+    async deleteSpec(id) {
+      return store.delete(id);
     },
   };
 }
@@ -54,6 +75,12 @@ describe("specs handlers", () => {
     expect(res?.body).toBe("# hello");
   });
 
+  it("returns null for a missing spec", async () => {
+    const s = makeFake([row]);
+    const res = await handleGetSpec(s, "missing");
+    expect(res).toBeNull();
+  });
+
   it("syncs unique-slug spec to <slug>.md", async () => {
     const s = makeFake([row]);
     const dir = mkdtempSync(join(tmpdir(), "sync-"));
@@ -80,5 +107,44 @@ describe("specs handlers", () => {
     }
     expect(new Set(names).size).toBe(2);
     expect(res.synced.every((r) => r.collided)).toBe(true);
+  });
+
+  it("creates or replaces a spec via putSpec", async () => {
+    const s = makeFake([]);
+    const res = await handlePutSpec(s, "new-id", {
+      path: "/cart",
+      title: "Cart",
+      body: "cart body",
+      updatedBy: "tester",
+    });
+    expect(res.id).toBe("new-id");
+    expect(res.path).toBe("/cart");
+    expect(res.title).toBe("Cart");
+    expect(res.body).toBe("cart body");
+    expect(res.status).toBe("DRAFT");
+    const stored = await s.getSpec("new-id");
+    expect(stored?.title).toBe("Cart");
+  });
+
+  it("preserves externalUrl through putSpec round-trip", async () => {
+    const s = makeFake([]);
+    const res = await handlePutSpec(s, "new-id", {
+      path: "/cart",
+      externalUrl: "https://example.com/doc",
+    });
+    expect(res.externalUrl).toBe("https://example.com/doc");
+  });
+
+  it("deletes a spec", async () => {
+    const s = makeFake([row]);
+    const res = await handleDeleteSpec(s, "aaaaaaaa1111");
+    expect(res).toBe(true);
+    expect(await s.getSpec("aaaaaaaa1111")).toBeNull();
+  });
+
+  it("returns false when deleting a missing spec", async () => {
+    const s = makeFake([row]);
+    const res = await handleDeleteSpec(s, "missing");
+    expect(res).toBe(false);
   });
 });

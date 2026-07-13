@@ -74,10 +74,6 @@ importers:
         version: 6.1.1(typescript@7.0.1-rc)(vite@8.1.3(@types/node@26.1.0)(jiti@2.7.0))
 
   packages/dev-plugin:
-    dependencies:
-      '@supabase/supabase-js':
-        specifier: ^2.110.0
-        version: 2.110.0
     devDependencies:
       '@types/node':
         specifier: ^26.1.0

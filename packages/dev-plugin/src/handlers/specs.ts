@@ -2,7 +2,7 @@ import { mkdir, unlink, writeFile } from "node:fs/promises";
 import { join } from "node:path";
 import { loadManifest, saveManifest } from "../manifest.js";
 import { resolveCollisions } from "../slug.js";
-import type { DevSupabase, SpecRow } from "../supabase.js";
+import type { DevStorage, SpecRow } from "../storage.js";
 
 export interface SpecDTO {
   id: string;
@@ -28,6 +28,9 @@ function toDTO(row: SpecRow): SpecDTO {
     title: row.title,
     status: row.status,
     body: row.sections?.body ?? "",
+    ...(row.sections?.externalUrl
+      ? { externalUrl: row.sections.externalUrl }
+      : {}),
     updatedBy: row.updated_by,
     updatedAt: new Date(row.updated_at).getTime(),
   };
@@ -39,27 +42,27 @@ function fileHeader(spec: SpecDTO): string {
 }
 
 export async function handleListSpecs(
-  supabase: DevSupabase,
+  storage: DevStorage,
   filter: { path?: string }
 ): Promise<SpecDTO[]> {
-  const rows = await supabase.listSpecs(filter);
+  const rows = await storage.listSpecs(filter);
   return rows.map(toDTO);
 }
 
 export async function handleGetSpec(
-  supabase: DevSupabase,
+  storage: DevStorage,
   id: string
 ): Promise<SpecDTO | null> {
-  const row = await supabase.getSpec(id);
+  const row = await storage.getSpec(id);
   return row ? toDTO(row) : null;
 }
 
 export async function handleSyncAll(
-  supabase: DevSupabase,
+  storage: DevStorage,
   specSyncDir: string,
   filter: { path?: string }
 ): Promise<{ synced: SyncedSpec[]; removed: string[] }> {
-  const rows = await supabase.listSpecs(filter);
+  const rows = await storage.listSpecs(filter);
   const specs = rows.map(toDTO);
 
   await mkdir(specSyncDir, { recursive: true });
@@ -116,18 +119,18 @@ export async function handleSyncAll(
 }
 
 export async function handleSyncOne(
-  supabase: DevSupabase,
+  storage: DevStorage,
   specSyncDir: string,
   id: string
 ): Promise<SyncedSpec | null> {
-  const target = await supabase.getSpec(id);
+  const target = await storage.getSpec(id);
   if (!target) return null;
   /**
    * collision 은 <specSyncDir> 안에서 파일 이름이 겹치는지 여부라, 같은 flat 디렉터리
    * 를 공유하는 모든 spec 을 대상으로 판정해야 syncOne 과 syncAll 이 같은 파일명을
    * 낸다. 이전에는 target.path 의 sibling 만 봐 다른 path 의 동명 spec 을 놓쳤다.
    */
-  const allSpecs = await supabase.listSpecs({});
+  const allSpecs = await storage.listSpecs({});
   const filenameById = resolveCollisions(
     allSpecs.map((r) => ({ id: r.id, title: r.title }))
   );
@@ -143,4 +146,40 @@ export async function handleSyncOne(
   const nameWithoutExt = filename.slice(0, -3);
   const baseSlug = nameWithoutExt.replace(/-[0-9a-f]{8}$/, "");
   return { id, localPath, collided: nameWithoutExt !== baseSlug };
+}
+
+export interface SpecPutInput {
+  path: string;
+  title?: string;
+  status?: SpecRow["status"];
+  body?: string;
+  externalUrl?: string;
+  updatedBy?: string;
+}
+
+export async function handlePutSpec(
+  storage: DevStorage,
+  id: string,
+  input: SpecPutInput
+): Promise<SpecDTO> {
+  const row = await storage.upsertSpec({
+    id,
+    path: input.path,
+    title: input.title ?? "",
+    status: input.status ?? "DRAFT",
+    sections: {
+      body: input.body ?? "",
+      ...(input.externalUrl ? { externalUrl: input.externalUrl } : {}),
+    },
+    updated_by: input.updatedBy ?? "",
+    updated_at: new Date().toISOString(),
+  });
+  return toDTO(row);
+}
+
+export async function handleDeleteSpec(
+  storage: DevStorage,
+  id: string
+): Promise<boolean> {
+  return storage.deleteSpec(id);
 }
