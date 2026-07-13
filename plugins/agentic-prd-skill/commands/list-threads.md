@@ -3,7 +3,7 @@ name: list-threads
 description: List unresolved comment threads on the running dev server.
 ---
 
-Read `.agentic-prd.dev.json` at the workspace root, then run:
+Read `.agentic-prd.dev.json` (walk up from cwd to find it), then run:
 
 ```bash
 curl -sf "http://localhost:{port}{prefix}/threads?resolved=false"

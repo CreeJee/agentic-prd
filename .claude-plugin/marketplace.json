@@ -1,0 +1,13 @@
+{
+  "name": "agentic-prd",
+  "owner": {
+    "name": "CreeJee"
+  },
+  "plugins": [
+    {
+      "name": "agentic-prd",
+      "source": "./plugins/agentic-prd-skill",
+      "description": "Comment-pin driven agentic dev loop: one-shot setup, drain open threads (locate → fix → reply → resolve), sync spec docs."
+    }
+  ]
+}

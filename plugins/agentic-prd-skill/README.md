@@ -1,13 +1,24 @@
-# agentic-prd Claude Code skill
+# agentic-prd Claude Code plugin
 
-Companion skill for [`@agentic-prd/dev-plugin`](../../packages/dev-plugin). Use natural language commands inside Claude Code to interact with a running widget dev server.
+Companion plugin for [`@agentic-prd/dev-plugin`](../../packages/dev-plugin).
+Drive the comment-pin loop from Claude Code: one-shot setup, drain open threads,
+inspect/resolve/reply, sync spec docs.
 
-## Install
+## Install (no clone needed)
 
-Copy or symlink this directory into `~/.claude/plugins/`:
-
-```bash
-ln -s "$(pwd)/plugins/agentic-prd-skill" "$HOME/.claude/plugins/agentic-prd-skill"
+```
+/plugin marketplace add CreeJee/agentic-prd
+/plugin install agentic-prd@agentic-prd
 ```
 
-Restart Claude Code. Verify the skill loads by running `/agentic-prd:list-threads` from a workspace that has `pnpm play` running.
+Then, in an app with the dev server running: `/agentic-prd:list-threads`.
+To set up a fresh app end-to-end: `/agentic-prd:setup`.
+
+## Local development (this repo)
+
+```
+/plugin marketplace add /path/to/agentic-prd
+/plugin install agentic-prd@agentic-prd
+```
+
+Validate before pushing: `claude plugin validate .` from the repo root.

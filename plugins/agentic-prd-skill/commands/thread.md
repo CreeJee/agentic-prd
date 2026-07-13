@@ -5,7 +5,7 @@ description: Show a thread's full comments plus candidate source locations.
 
 Args: `<thread-id>`.
 
-Read `.agentic-prd.dev.json`, then run these two calls in parallel:
+Read `.agentic-prd.dev.json` (walk up from cwd to find it), then run these two calls in parallel:
 
 ```bash
 curl -sf "http://localhost:{port}{prefix}/threads/{id}"

@@ -1,11 +1,13 @@
 ---
 name: agentic-prd
-description: Use when the user wants to list, inspect, resolve, or sync comments and spec docs from a running agentic-prd widget dev server. Requires the workspace to have @agentic-prd/dev-plugin configured and `pnpm play` running.
+description: Use when the user wants to list, inspect, resolve, reply to, or sync comments and spec docs from a running agentic-prd widget dev server. Requires @agentic-prd/dev-plugin in the host app's vite config and the dev server running.
 ---
 
 # agentic-prd skill
 
-Discover the running dev server by walking up from the cwd until you find `pnpm-workspace.yaml`. In the same directory, look for `.agentic-prd.dev.json`:
+Discover the running dev server by walking up from the cwd until you find a
+`.agentic-prd.dev.json` file (it sits at the host app's project root — the
+workspace root in a pnpm monorepo, the Vite root otherwise):
 
 ```json
 { "port": 5173, "prefix": "/__agentic-prd" }
@@ -17,14 +19,30 @@ The base URL is `http://localhost:{port}{prefix}`. Use the `localhost` hostname,
 
 If the file is missing, tell the user:
 
-> `.agentic-prd.dev.json` not found. Start the dev server with `pnpm play` from the workspace root.
+> `.agentic-prd.dev.json` not found. Start the host app's dev server (`npm run dev` / `pnpm dev`; in this repo `pnpm play`). If it is running, check that `agenticPRDDev()` is registered in vite.config.
+
+Data lives in `.agentic-prd/*.json` next to the discovery file — but always go
+through the HTTP API, never edit those files while the server runs.
 
 ## Commands
 
+- `/agentic-prd:setup` — install & wire the widget + dev plugin into the current app.
+- `/agentic-prd:work` — drain open threads: locate → fix → reply → resolve each.
 - `/agentic-prd:list-threads` — list open (unresolved) threads.
 - `/agentic-prd:thread <id>` — thread detail + candidate source locations.
 - `/agentic-prd:resolve <id>` / `/agentic-prd:unresolve <id>` — toggle resolved.
 - `/agentic-prd:sync-specs [path]` — pull spec markdown files into local `docs/specs/`.
+
+## Reply to a thread (agent feedback loop)
+
+After fixing what a thread asks for, append a reply so the reporter sees the
+outcome inside the widget:
+
+```bash
+curl -sf -X POST "http://localhost:{port}{prefix}/threads/{id}/comments" \
+  -H "Content-Type: application/json" \
+  -d '{"author":"Claude","text":"수정했습니다 — <무엇을 어떻게, 1-2문장>"}'
+```
 
 ## Caveats
 
