@@ -1,9 +1,25 @@
 {
   "name": "@agentic-prd/dev-plugin",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "type": "module",
   "description": "Vite dev-server sidecar for reading @agentic-prd/widget comments and specs",
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/CreeJee/agentic-prd.git",
+    "directory": "packages/dev-plugin"
+  },
+  "homepage": "https://github.com/CreeJee/agentic-prd#readme",
+  "author": "CreeJee",
+  "keywords": [
+    "comment",
+    "annotation",
+    "widget",
+    "react",
+    "vite-plugin",
+    "claude-code",
+    "agentic"
+  ],
   "types": "./src/index.ts",
   "exports": {
     ".": "./dist/index.mjs",
@@ -11,17 +27,18 @@
   },
   "files": [
     "dist",
-    "src"
+    "src",
+    "README.md"
   ],
   "publishConfig": {
     "access": "public",
-    "main": "./dist/index.js",
-    "module": "./dist/index.js",
-    "types": "./dist/index.d.ts",
+    "main": "./dist/index.mjs",
+    "module": "./dist/index.mjs",
+    "types": "./dist/index.d.mts",
     "exports": {
       ".": {
-        "types": "./dist/index.d.ts",
-        "import": "./dist/index.js"
+        "types": "./dist/index.d.mts",
+        "import": "./dist/index.mjs"
       },
       "./package.json": "./package.json"
     }

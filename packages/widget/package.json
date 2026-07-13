@@ -1,9 +1,25 @@
 {
   "name": "@agentic-prd/widget",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "type": "module",
   "description": "Drop-in comment-pin widget",
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/CreeJee/agentic-prd.git",
+    "directory": "packages/widget"
+  },
+  "homepage": "https://github.com/CreeJee/agentic-prd#readme",
+  "author": "CreeJee",
+  "keywords": [
+    "comment",
+    "annotation",
+    "widget",
+    "react",
+    "vite-plugin",
+    "claude-code",
+    "agentic"
+  ],
   "sideEffects": [
     "**/*.css"
   ],
@@ -14,7 +30,8 @@
   },
   "files": [
     "dist",
-    "src"
+    "src",
+    "README.md"
   ],
   "publishConfig": {
     "access": "public",

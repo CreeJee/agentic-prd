@@ -37,3 +37,6 @@ playwright-report/
 
 # Spec sync manifest (spec 로컬 sync 상태만 담음, 재생성 가능)
 docs/specs/.sync.json
+
+# pnpm pack artifacts
+*.tgz
