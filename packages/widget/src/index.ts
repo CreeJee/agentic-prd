@@ -16,6 +16,8 @@ export {
 } from "./components/ui/select";
 export type { CommentWidgetConfig } from "./config";
 export { browserRouteSource, type RouteSource } from "./routeSource";
+export type { StorageAdapter } from "./storage";
+export { devServerStorage } from "./storage";
 export type {
   Anchor,
   CommentEntry,
@@ -25,4 +27,3 @@ export type {
   ScopeLevel,
   StoredAnchor,
 } from "./store";
-export type { SupabaseStorageConfig } from "./supabase";

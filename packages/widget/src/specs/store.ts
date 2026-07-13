@@ -2,10 +2,10 @@
  * 화면별 기획 문서 데이터 레이어 (PO/PD/BE/FE/QA 정렬용).
  * 한 화면(path)에 여러 문서(id)를 둘 수 있고, 본문은 자유 마크다운.
  *
- * QueryClient/SupabaseClient는 WidgetProvider가 Context로 주입(useSupabaseClient). 코멘트와
- * 같은 QueryClient를 공유한다. 읽기는 Supabase 폴링 useQuery + 파생 훅의 select, 쓰기는
+ * QueryClient/StorageAdapter는 WidgetProvider가 Context로 주입(useStorageAdapter). 코멘트와
+ * 같은 QueryClient를 공유한다. 읽기는 dev-plugin 폴링 useQuery + 파생 훅의 select, 쓰기는
  * react-query 공식 "via the cache" 낙관적 useMutation.
- * local/persist 모드는 폐기했고, 훅은 주입된 SupabaseClient만 호출한다.
+ * local/persist 모드는 폐기했고, 훅은 주입된 StorageAdapter만 호출한다.
  */
 import {
   queryOptions,
@@ -14,8 +14,8 @@ import {
   useQueryClient,
 } from "@tanstack/react-query";
 import { useCallback } from "react";
-import type { SupabaseClient } from "../supabase";
-import { useSupabaseClient } from "../WidgetProvider";
+import type { StorageAdapter } from "../storage";
+import { useStorageAdapter } from "../WidgetProvider";
 
 export type SpecStatus = "DRAFT" | "REVIEW" | "CONFIRMED";
 
@@ -132,10 +132,10 @@ function uid() {
  * specs 쿼리 공유 옵션. 화면(path)별로 서버에서 그 문서만 가져온다.
  * 파생 훅은 이 옵션에 select만 얹어 필요한 슬라이스에만 구독한다.
  */
-function specsQueryOptions(supabase: SupabaseClient, path: string) {
+function specsQueryOptions(storage: StorageAdapter, path: string) {
   return queryOptions({
     queryKey: specsKey(path),
-    queryFn: () => supabase.fetchSpecs(path),
+    queryFn: () => storage.fetchSpecs(path),
     refetchInterval: POLL_MS,
     refetchIntervalInBackground: true,
   });
@@ -146,22 +146,22 @@ function specsQueryOptions(supabase: SupabaseClient, path: string) {
  * useQuery 결과 전체를 반환 → 소비처에서 data/isLoading 사용.
  */
 export function useSpecDocsForPath(path: string) {
-  const supabase = useSupabaseClient();
+  const storage = useStorageAdapter();
   const select = useCallback(
     (docs: SpecDoc[]) => [...docs].sort((a, b) => b.updatedAt - a.updatedAt),
     []
   );
-  return useQuery({ ...specsQueryOptions(supabase, path), select });
+  return useQuery({ ...specsQueryOptions(storage, path), select });
 }
 
 /** 단일 문서 쿼리(반응형) — 그 문서가 바뀔 때만 리렌더. useQuery 결과 전체 반환 */
 export function useSpecDoc(path: string, id: string) {
-  const supabase = useSupabaseClient();
+  const storage = useStorageAdapter();
   const select = useCallback(
     (docs: SpecDoc[]) => docs.find((d) => d.id === id),
     [id]
   );
-  return useQuery({ ...specsQueryOptions(supabase, path), select });
+  return useQuery({ ...specsQueryOptions(storage, path), select });
 }
 
 /** 새 문서 팩토리(컴포넌트가 mutate 변수로 넘긴다) */
@@ -208,10 +208,10 @@ export function createLinkedSpecDoc(
  */
 function useSpecMutation<V extends { path: string }>(config: {
   optimistic: (prev: SpecDoc[], vars: V) => SpecDoc[];
-  send: (client: SupabaseClient, vars: V, next: SpecDoc[]) => Promise<unknown>;
+  send: (client: StorageAdapter, vars: V, next: SpecDoc[]) => Promise<unknown>;
 }) {
   const qc = useQueryClient();
-  const supabase = useSupabaseClient();
+  const storage = useStorageAdapter();
   return useMutation({
     onMutate: async (vars: V) => {
       const key = specsKey(vars.path);
@@ -222,7 +222,7 @@ function useSpecMutation<V extends { path: string }>(config: {
     },
     mutationFn: (vars: V) =>
       config.send(
-        supabase,
+        storage,
         vars,
         qc.getQueryData<SpecDoc[]>(specsKey(vars.path)) ?? []
       ),

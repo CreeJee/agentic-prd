@@ -1,7 +1,7 @@
 /**
  * 코멘트(핀) 데이터 레이어. Figma처럼 화면에 핀을 찍고 코멘트 스레드를 단다.
  *
- * **single source of truth는 Supabase(원격)** 이므로 server-state 라이브러리인
+ * **single source of truth는 주입된 StorageAdapter(server)** 이므로 server-state 라이브러리인
  * @tanstack/react-query로만 다룬다. 컴포넌트는 훅을 직접 호출한다:
  *  - 읽기: useThreads / useUserName (useQuery, remote는 refetchInterval 폴링)
  *  - 쓰기: useAddThread / useAddComment / useUpdateComment / useToggleResolved /
@@ -11,21 +11,22 @@
  * Promise return → refetch까지 pending 유지). 호출부마다 try/catch가 필요 없다.
  *
  * 저장소는 config로 주입한다(하드코딩 없음):
- *  - Supabase: 공용 저장소(모두가 같은 코멘트를 봄, POLL_MS 폴링).
- * local/persist 모드는 폐기했고, 훅은 주입된 SupabaseClient만 호출한다.
+ *  - StorageAdapter(기본 devServerStorage — dev-plugin 로컬 JSON): 공용 저장소
+ *    (모두가 같은 코멘트를 봄, POLL_MS 폴링).
+ * local/persist 모드는 폐기했고, 훅은 주입된 StorageAdapter만 호출한다.
  *
  * 사용자 이름은 server-state가 아니라 개인 client state(브라우저별, 화면 무관)다 →
  * react-query가 아니라 jotai atomWithStorage(localStorage 백업)로 둔다. 표시 시점에
  * 바로 읽도록 getOnInit으로 첫 렌더부터 저장값을 반영한다.
  *
- * QueryClient/SupabaseClient는 모듈 싱글톤이 아니라 WidgetProvider가 렌더 시점에 만들어
- * Context로 주입한다(useSupabaseClient). 훅은 이를 읽어 queryFn/mutation에 쓴다.
+ * QueryClient/StorageAdapter는 모듈 싱글톤이 아니라 WidgetProvider가 렌더 시점에 만들어
+ * Context로 주입한다(useStorageAdapter). 훅은 이를 읽어 queryFn/mutation에 쓴다.
  */
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useAtomValue, useSetAtom } from "jotai";
 import { atomWithStorage } from "jotai/utils";
-import type { SupabaseClient } from "./supabase";
-import { useSupabaseClient } from "./WidgetProvider";
+import type { StorageAdapter } from "./storage";
+import { useStorageAdapter } from "./WidgetProvider";
 
 export interface CommentEntry {
   id: string;
@@ -141,10 +142,10 @@ function uid() {
 
 /** 현재 화면(path)의 스레드 — 서버에서 그 path만 가져온다(클라 필터 없음) */
 export function useThreads(path: string): CommentThread[] {
-  const supabase = useSupabaseClient();
+  const storage = useStorageAdapter();
   const { data } = useQuery({
     queryKey: threadsKey(path),
-    queryFn: () => supabase.fetchThreads(path),
+    queryFn: () => storage.fetchThreads(path),
     refetchInterval: POLL_MS,
     refetchIntervalInBackground: true,
   });
@@ -193,13 +194,13 @@ export function createThread(input: {
 function useThreadMutation<V extends { path: string }>(config: {
   optimistic: (prev: CommentThread[], vars: V) => CommentThread[];
   send: (
-    client: SupabaseClient,
+    client: StorageAdapter,
     vars: V,
     next: CommentThread[]
   ) => Promise<unknown>;
 }) {
   const qc = useQueryClient();
-  const supabase = useSupabaseClient();
+  const storage = useStorageAdapter();
   return useMutation({
     onMutate: async (vars: V) => {
       const key = threadsKey(vars.path);
@@ -211,7 +212,7 @@ function useThreadMutation<V extends { path: string }>(config: {
     },
     mutationFn: (vars: V) =>
       config.send(
-        supabase,
+        storage,
         vars,
         qc.getQueryData<CommentThread[]>(threadsKey(vars.path)) ?? []
       ),
@@ -332,5 +333,5 @@ export const useUpdateAnchor = () =>
     optimistic: (prev, { threadId, xPct, yPx, anchor }) =>
       prev.map((t) => (t.id === threadId ? { ...t, xPct, yPx, anchor } : t)),
     send: (client, { threadId, xPct, yPx, anchor }) =>
-      client.patchThread(threadId, { x_pct: xPct, y_pct: yPx, anchor }),
+      client.patchThread(threadId, { xPct, yPx, anchor }),
   });

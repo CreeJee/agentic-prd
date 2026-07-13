@@ -141,9 +141,6 @@ importers:
       '@lexical/utils':
         specifier: ^0.46.0
         version: 0.46.0(typescript@7.0.1-rc)
-      '@supabase/supabase-js':
-        specifier: ^2.110.0
-        version: 2.110.0
       '@tanstack/react-query':
         specifier: ^5.101.2
         version: 5.101.2(react@19.2.7)

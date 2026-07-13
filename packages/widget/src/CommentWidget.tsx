@@ -49,7 +49,7 @@ import {
 import { useSetWidgetPortalContainer, WidgetProvider } from "./WidgetProvider";
 
 interface CommentWidgetProps {
-  config: CommentWidgetConfig;
+  config?: CommentWidgetConfig;
   /**
    * 현재 화면 식별자(코멘트를 화면별로 그룹화). 호스트가 렌더 시점에 전달한다
    * (react-router 등으로 라우트 바뀌면 리렌더돼 자동 반영). 미지정 시 window.location.pathname.
@@ -60,7 +60,7 @@ interface CommentWidgetProps {
 }
 
 /**
- * 공개 진입점. WidgetProvider가 config로 QueryClient/SupabaseClient를 만들어 주입한다.
+ * 공개 진입점. WidgetProvider가 config로 QueryClient/StorageAdapter를 만들어 주입한다.
  * pageKey/pageLabel은 prop > config.routeSource > browserRouteSource 순으로 해석한다.
  */
 export function CommentWidget({
@@ -68,7 +68,7 @@ export function CommentWidget({
   pageKey,
   pageLabel,
 }: CommentWidgetProps) {
-  const route = useRouteKey(pageKey, pageLabel, config.routeSource);
+  const route = useRouteKey(pageKey, pageLabel, config?.routeSource);
   return (
     <WidgetProvider config={config}>
       <CommentWidgetInner pageKey={route.pageKey} pageLabel={route.pageLabel} />
