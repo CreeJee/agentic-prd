@@ -1,6 +1,7 @@
-﻿---
+---
 name: sync-specs
 description: Pull spec markdown files from the dev server into local docs/specs/.
+argument-hint: [path]
 ---
 
 Args: `[path]` (optional). If provided, only sync specs for that widget path.

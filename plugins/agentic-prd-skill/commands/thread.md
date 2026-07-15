@@ -1,6 +1,7 @@
-﻿---
+---
 name: thread
 description: Show a thread's full comments plus candidate source locations.
+argument-hint: <thread-id>
 ---
 
 Args: `<thread-id>`.

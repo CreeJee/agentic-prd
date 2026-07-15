@@ -1,4 +1,4 @@
-﻿---
+---
 name: list-threads
 description: List unresolved comment threads on the running dev server.
 ---

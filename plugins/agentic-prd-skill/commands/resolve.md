@@ -1,6 +1,7 @@
-﻿---
+---
 name: resolve
 description: Mark a thread as resolved.
+argument-hint: <thread-id>
 ---
 
 Args: `<thread-id>`.

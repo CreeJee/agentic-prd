@@ -1,5 +1,10 @@
 {
   "name": "agentic-prd",
   "version": "0.2.0",
-  "description": "Talk to a running @agentic-prd/dev-plugin from Claude Code. Setup the widget, list/inspect/resolve threads, drain the comment queue, sync specs."
+  "description": "Talk to a running @agentic-prd/dev-plugin from Claude Code. Setup the widget, list/inspect/resolve threads, drain the comment queue, sync specs.",
+  "author": { "name": "CreeJee" },
+  "homepage": "https://github.com/CreeJee/agentic-prd",
+  "repository": "https://github.com/CreeJee/agentic-prd",
+  "license": "MIT",
+  "keywords": ["claude-code", "prd", "comments", "specs", "vite", "agentic"]
 }

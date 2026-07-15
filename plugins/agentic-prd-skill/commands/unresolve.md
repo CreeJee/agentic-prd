@@ -1,6 +1,7 @@
-﻿---
+---
 name: unresolve
 description: Reopen a resolved thread.
+argument-hint: <thread-id>
 ---
 
 Args: `<thread-id>`.
