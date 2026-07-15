@@ -14,6 +14,24 @@ inspect/resolve/reply, sync spec docs.
 Then, in an app with the dev server running: `/agentic-prd:list-threads`.
 To set up a fresh app end-to-end: `/agentic-prd:setup`.
 
+Alternatives:
+
+- Skill only (no slash commands), via [`npx skills`](https://github.com/vercel-labs/skills):
+
+  ```bash
+  npx skills add CreeJee/agentic-prd
+  ```
+
+- From a clone of this repo:
+
+  ```bash
+  pnpm skill:install        # symlinks this directory into ~/.claude/plugins
+  # flags: --copy (copy instead of symlink), --force (replace existing), --dest <dir>
+  ```
+
+- Let any coding agent do the whole setup: hand it
+  [`llms-install.md`](../../llms-install.md).
+
 ## Local development (this repo)
 
 ```

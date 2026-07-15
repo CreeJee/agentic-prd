@@ -42,7 +42,7 @@ biome 은 워크스페이스 루트 `biome.json` 을 공유하며 각 패키지�
 
 검증 기준: **typecheck 0 + biome(error) 클린**. 번들 확인은 build, 런타임은 play(실키보드/마우스). typecheck 는 `tsgo`(typescript-native-preview) 기반이라 표준 `tsc` 보다 훨씬 빠르지만 동일 옵션(`tsconfig.base.json` 확장) 을 사용한다.
 
-skill 설치(no-clone): `/plugin marketplace add CreeJee/agentic-prd` → `/plugin install agentic-prd@agentic-prd`. 로컬 검증은 `claude plugin validate .`.
+skill 설치(no-clone): `/plugin marketplace add CreeJee/agentic-prd` → `/plugin install agentic-prd@agentic-prd`. skill 만 원클릭은 `npx skills add CreeJee/agentic-prd`, 레포 클론에서는 `pnpm skill:install`(--copy/--force/--dest). 로컬 검증은 `claude plugin validate .`. LLM 이 따라할 수 있는 전체 설치 절차는 루트 `llms-install.md`.
 
 ## Do
 
@@ -144,7 +144,11 @@ agentic-prd/
 │     ├─ skills/agentic-prd/SKILL.md
 │     ├─ skills/setup/SKILL.md
 │     └─ commands/…          # work / list-threads / thread / resolve / unresolve / sync-specs
-├─ README.md                 # 사용자용 quickstart
+├─ scripts/
+│  └─ install-skill.mjs      # pnpm skill:install — 플러그인 로컬 symlink/copy
+├─ README.md                 # 사용자용 quickstart (단일 파일에 EN·KO 병기)
+├─ llms-install.md / llms.txt # LLM 용 설치 가이드 + 문서 인덱스
+├─ .node-version / mise.toml # Node 26 고정 (fnm/mise 겸용)
 └─ docs/
    └─ superpowers/specs/     # 설계/드리프트 기록
 ```

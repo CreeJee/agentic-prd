@@ -1,0 +1,11 @@
+# agentic-prd
+
+> Comment-pin + PRD overlay widget for React apps, a dev-only Vite sidecar exposing them over a local HTTP API (local JSON storage, no backend), and a Claude Code plugin so coding agents can act on in-app feedback.
+
+## Docs
+
+- [Install guide for agents](https://raw.githubusercontent.com/CreeJee/agentic-prd/main/llms-install.md): step-by-step install with success criteria
+- [README](https://raw.githubusercontent.com/CreeJee/agentic-prd/main/README.md): overview, quickstart, the loop
+- [Contributor/agent guide](https://raw.githubusercontent.com/CreeJee/agentic-prd/main/AGENTS.md): architecture, commands, pitfalls
+- [Widget package](https://raw.githubusercontent.com/CreeJee/agentic-prd/main/packages/widget/README.md): @agentic-prd/widget API
+- [Dev plugin package](https://raw.githubusercontent.com/CreeJee/agentic-prd/main/packages/dev-plugin/README.md): @agentic-prd/dev-plugin API
